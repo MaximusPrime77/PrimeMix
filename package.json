@@ -29,7 +29,8 @@
     },
     "win": {
       "target": [
-        "portable"
+        "portable",
+        "zip"
       ],
       "icon": "app_icon.png"
     },
