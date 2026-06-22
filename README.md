@@ -16,114 +16,94 @@
 
 <br>
 
-**SereneMix** is a lid by Microsoft Store's Ambie app, it allows you to play multiple relaxing sounds simultaneously, adjust their individual volume levels, save custom mixes, set a sleep timer, and customize titles and cover art.
+**SereneMix**, Microsoft Store'da yer alan Ambie uygulamasından esinlenerek geliştirilmiş, Windows için modern bir ortam sesi mikseridir. Birden fazla rahatlatıcı sesi aynı anda oynatmanıza, ses seviyelerini bağımsız olarak ayarlamanıza, özel miksler kaydetmenize, uyku zamanlayıcısı belirlemenize ve ses kapakları ile başlıklarını özelleştirmenize olanak tanır.
 
-It features a real-time directory watcher, allowing you to drop new audio files (.mp3, .wav, .ogg, .flac, .m4a) directly into your local sounds folder and listen to them instantly without restarting the app.
-
----
-
-## Key Features 🚀
-
-- **Simultaneous Audio Playback**: Listen to multiple nature or white noise sounds at the same time to create your perfect ambient atmosphere.
-- **System Tray Integration**: SereneMix minimizes to the system tray so it can run and play sounds in the background. Right-click the tray icon to play/stop all sounds or exit.
-- **Multi-language Support (EN/TR)**: Toggle between English and Turkish languages dynamically. The interface, settings, and sound names/categories translate instantly, and the system tray menu synchronizes with the active language.
-- **Premium Glassmorphic UI**: Enjoy a gorgeous, fully borderless window with a dedicated custom titlebar for native double-click to maximize/restore, smooth hover animations, custom equalizer wave visuals, and dynamic CSS gradients.
-- **Real-time Folder Syncing**: Simply drag and drop your music/ambient audio files into the configured folder, and they will show up instantly in the app grid.
-- **Sleep Timer (Fade-out)**: Fall asleep peacefully. Set a sleep timer from 15 minutes to 2 hours. When the time runs out, the volume fades out smoothly over 3 seconds before stopping.
-- **Saved Mixes**: Save your favorite combinations of sounds and volume configurations so you can restore them with a single click.
-- **Customizable Sounds**: Personalize sound titles, assign categories, and upload custom cover art directly within the application.
+Gerçek zamanlı dizin izleyicisi (Directory Watcher) sayesinde, yeni ses dosyalarınızı (`.mp3`, `.wav`, `.ogg`, `.flac`, `.m4a`) uygulamayı yeniden başlatmaya gerek kalmadan doğrudan yerel ses klasörünüze sürükleyip bırakarak anında dinleyebilirsiniz.
 
 ---
 
-## Screenshots & Icons 📸
+## Öne Çıkan Özellikler 🚀
 
-<p align="center">
-  <img src="app_icon.png" width="160" alt="SereneMix Icon" style="border-radius: 20%; box-shadow: 0 10px 25px rgba(0,0,0,0.3);" />
-</p>
+- **Eşzamanlı Ses Oynatma**: Mükemmel ambiyansınızı yaratmak için birden fazla doğa veya beyaz gürültü sesini aynı anda dinleyin.
+- **Sistem Tepsisi (Tray) Entegrasyonu**: SereneMix arka planda çalışmaya ve sesleri oynatmaya devam etmek için sistem tepsisine küçülür. Tepsi simgesine sağ tıklayarak tüm sesleri oynatabilir, durdurabilir veya uygulamadan çıkabilirsiniz.
+- **Dinamik Çoklu Dil Desteği (EN/TR)**: İngilizce ve Türkçe dilleri arasında anında geçiş yapın. Arayüz, ayarlar, ses adları/kategorileri ve sistem tepsisi menüsü seçilen dille anlık olarak senkronize olur.
+- **Premium Glassmorphism Arayüzü**: Tamamen çerçevesiz pencere yapısı, tam ekran/pencere boyutu için çift tıklama destekli özel başlık çubuğu, akıcı animasyonlar, dinamik CSS gradyanları ve ekolayzır dalga görselleştirmeleri.
+- **Gerçek Zamanlı Klasör Senkronizasyonu**: Ses dosyalarınızı yapılandırılan klasöre eklediğiniz an, uygulamayı kapatıp açmaya gerek kalmadan arayüzdeki ızgarada listelenir.
+- **Uyku Zamanlayıcısı (Fade-out)**: 15 dakikadan 2 saate kadar uyku zamanlayıcısı ayarlayın. Süre dolduğunda, ses seviyesi 3 saniye içinde pürüzsüzce azalarak (fade-out) kendiliğinden durur.
+- **Kayıtlı Miksler**: Favori ses kombinasyonlarınızı ve ses seviyesi konfigürasyonlarınızı kaydedin, tek tıkla geri yükleyin.
+- **Özelleştirilebilir Sesler**: Ses başlıklarını kişiselleştirin, kategoriler atayın ve doğrudan uygulama içinden özel kapak görselleri yükleyin.
 
 ---
 
-## Getting Started 🛠️
+## Başlangıç 🛠️
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+### Gereksinimler
+Geliştirme ortamında çalıştırmak için bilgisayarınızda [Node.js](https://nodejs.org/) kurulu olmalıdır.
 
-### Installation
+### Kurulum
 
-1. Clone or download this repository:
+1. Depoyu klonlayın veya indirin:
    ```bash
-   git clone https://github.com/MaximusPrime77/SereneMix.git
+   git clone [https://github.com/MaximusPrime77/SereneMix.git](https://github.com/MaximusPrime77/SereneMix.git)
    cd SereneMix
-   ```
-2. Place your ambient sound files in the target directory:
-   `C:\Users\MAXIMUS\PROJECTS\SereneMixSound`
-   *(Or modify `main.js` to change the `SOUNDS_DIR` path to your preference)*.
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+   
+   Ortam seslerinizi hedef dizine yerleştirin:
+C:\Users\MAXIMUS\PROJECTS\SereneMixSound
+(Veya main.js içerisindeki SOUNDS_DIR yolunu kendi tercihinize göre değiştirin).
 
-### Running the App
-Start the app in development mode:
-```bash
+Bağımlılıkları yükleyin:
+
+Bash
+npm install
+Uygulamayı Çalıştırma
+Geliştirme modunda başlatmak için:
+
+Bash
 npm start
-```
+Dağıtım / Taşınabilir Sürüm Oluşturma
+Uygulamayı Windows için taşınabilir bir arşiv paketi haline getirmek için:
 
-### Packaging / Building Portable Executable
-To package the app into a single, standalone, portable `.exe` file for Windows:
-```bash
+Bash
 npm run build
-```
-Once the build completes, your portable executable will be located in the `dist/` directory.
+İşlem tamamlandığında, paketlenmiş sürüm dist/ dizini altında yer alacaktır.
 
-> [!IMPORTANT]
-> **How to Run the App:**
-> 
-> ### 📌 For Portable Version (`SereneMix.1.0.0.portable.exe`):
-> - **Dedicated Folder Required:** To avoid cluttering your Desktop or Downloads folder, you **must** place `SereneMix.1.0.0.portable.exe` inside a dedicated empty folder (e.g., `C:\Apps\SereneMix\`) before running it. When executed, it will automatically create a folder named `SereneMix_Data` in the same directory to store your audio files, custom cover art, and configuration data.
-> - **First Launch Delay:** On the very first launch, the application will take a few seconds to extract and copy the default sounds to the `SereneMix_Data` folder. Please wait patiently for a few seconds for the setup to complete.
-> - **Portability:** If you want to carry your custom sounds and configurations to another computer, simply copy both the `.exe` file and its adjacent `SereneMix_Data` folder together.
-> 
-> ### 📌 For Zip Version (`SereneMix-1.0.0-win.zip`):
-> - **No Setup Delay:** This compressed archive already contains the application files and the pre-packaged `SereneMix_Data` folder with all default sounds.
-> - **Running:** Simply extract the `.zip` file to any directory and double-click `SereneMix.exe` inside the extracted folder. All sounds will be immediately available without any setup delay.
+[!IMPORTANT]
+Kullanım Kılavuzu (Portatif Zip Sürümü):
 
----
+Kurulum Gerektirmez: SereneMix-1.0.0-win.zip arşivi, uygulamanın çalışması için gerekli tüm dosyaları ve varsayılan sesleri içeren SereneMix_Data klasörünü önceden paketlenmiş olarak barındırır.
 
-## Project Structure 📁
+Doğrudan Çalıştırma: İndirdiğiniz .zip dosyasını bilgisayarınızda dilediğiniz bir klasöre ayıklayın ve içerisindeki SereneMix.exe dosyasına çift tıklayarak uygulamayı anında başlatın.
 
-```
+Tam Taşınabilirlik: Tüm sesleriniz, kapak görselleriniz ve kullanıcı yapılandırmalarınız bu klasör içerisinde saklanır. Uygulamayı başka bir bilgisayara taşımak isterseniz, yalnızca ayıkladığınız bu klasörü kopyalamanız yeterlidir.
+
+Kolay Erişim: Kolay erişim için SereneMix.exe dosyasına sağ tıklayıp masaüstünüze bir kısayol oluşturabilirsiniz.
+
+Proje Yapısı 📁
 SereneMix/
-├── package.json        # Build config & dependencies
-├── main.js             # Electron main process (system tray, window, IPC, file watcher)
-├── preload.js          # Electron secure IPC bridge
-├── app_icon.png        # High-res 256x256 app logo
-├── tray_icon.png       # 32x32 transparent tray icon
-└── renderer/           # Frontend assets
-    ├── index.html      # UI Layout
-    ├── styles.css      # Custom glassmorphic styling
-    └── app.js          # Playback logic, timer, state management & UI interactions
-```
+├── package.json        # Derleme yapılandırması ve bağımlılıklar
+├── main.js             # Electron ana süreci (Sistem tepsisi, pencere yönetimi, IPC, dosya izleyici)
+├── preload.js          # Electron güvenli IPC köprüsü
+├── app_icon.png        # Yüksek çözünürlüklü 256x256 uygulama logosu
+├── tray_icon.png       # 32x32 şeffaf sistem tepsisi simgesi
+└── renderer/           # Ön yüz varlıkları
+    ├── index.html      # Arayüz iskeleti
+    ├── styles.css      # Özelleştirilmiş glassmorphic CSS stilleri
+    └── app.js          # Oynatma mantığı, zamanlayıcı, durum yönetimi ve kullanıcı etkileşimleri
+Kullanılan Teknolojiler 💻
+Electron (v31.0.0)
 
----
+Node.js (Yerleşik fs modülü ve dizin izleme)
 
-## Technologies Used 💻
+HTML5 Audio API (Döngüsel oynatma, oynat/durdur kontrolleri, ses haritalama)
 
-- **Electron** (v31.0.0)
-- **Node.js** (Native `fs` module & directory watching)
-- **HTML5 Audio API** (Looping, play/pause controls, volume mapping)
-- **Vanilla CSS** (Custom CSS Gradients, Glassmorphism, Backdrop filters)
+Vanilla CSS (Özel CSS Gradyanları, Glassmorphism, Backdrop filtreleri)
 
----
+Yazar 👤
+Maximus Decimus Meridius tarafından ❤️ ile geliştirildi ve tasarlandı.
 
-## Author 👤
+GitHub: @MaximusPrime77
 
-Developed and designed with ❤️ by **Maximus Decimus Meridius**
-- **GitHub**: [@MaximusPrime77](https://github.com/MaximusPrime77)
-- **Email**: b.maximus.prime@gmail.com
+E-posta: b.maximus.prime@gmail.com
 
----
-
-## License 📄
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Lisans 📄
+Bu proje MIT Lisansı ile lisanslanmıştır - detaylar için LICENSE dosyasına göz atabilirsiniz.
