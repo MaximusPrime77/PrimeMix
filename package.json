@@ -43,7 +43,7 @@
     ],
     "extraFiles": [
       {
-        "from": "C:/Users/MAXIMUS/PROJECTS/SereneMixSound",
+        "from": "../SereneMixSound",
         "to": "SereneMix_Data",
         "filter": [
           "**/*"
