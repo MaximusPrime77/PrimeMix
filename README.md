@@ -49,6 +49,7 @@ Geliştirme ortamında çalıştırmak için bilgisayarınızda [Node.js](https:
    
    Ortam seslerinizi hedef dizine yerleştirin:
 C:\Users\MAXIMUS\PROJECTS\SereneMixSound
+
 (Veya main.js içerisindeki SOUNDS_DIR yolunu kendi tercihinize göre değiştirin).
 
 Bağımlılıkları yükleyin:
@@ -79,6 +80,7 @@ Tam Taşınabilirlik (Portable): Tüm sesleriniz, özel kapak görselleriniz ve 
 Masaüstü Kısayolu: Kolay erişim sağlamak için klasör içindeki SereneMix.exe dosyasına sağ tıklayıp masaüstünüze bir kısayol oluşturabilirsiniz.
 
 Proje Yapısı 📁
+
 SereneMix/
 ├── package.json        # Derleme yapılandırması ve bağımlılıklar
 ├── main.js             # Electron ana süreci (Sistem tepsisi, pencere yönetimi, IPC, dosya izleyici)
@@ -89,7 +91,8 @@ SereneMix/
     ├── index.html      # Arayüz iskeleti
     ├── styles.css      # Özelleştirilmiş glassmorphic CSS stilleri
     └── app.js          # Oynatma mantığı, zamanlayıcı, durum yönetimi ve kullanıcı etkileşimleri
-Kullanılan Teknolojiler 💻
+	
+	Kullanılan Teknolojiler 💻
 Electron (v31.0.0)
 
 Node.js (Yerleşik fs modülü ve dizin izleme)
