@@ -5,7 +5,7 @@ const fs = require('fs');
 let mainWindow;
 let appTray;
 const isPackaged = app.isPackaged;
-const EXE_DIR = path.dirname(process.execPath);
+const EXE_DIR = process.env.PORTABLE_EXECUTABLE_DIR || path.dirname(process.execPath);
 
 const SOUNDS_DIR = isPackaged
   ? path.join(EXE_DIR, 'SereneMix_Data')
@@ -149,6 +149,13 @@ function startWatcher() {
 // IPC Communication handlers
 ipcMain.handle('get-sounds', async () => {
   try {
+    // Ensure directories exist right before reading (failsafe)
+    if (!fs.existsSync(SOUNDS_DIR)) {
+      fs.mkdirSync(SOUNDS_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(COVERS_DIR)) {
+      fs.mkdirSync(COVERS_DIR, { recursive: true });
+    }
     const files = fs.readdirSync(SOUNDS_DIR);
     const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
     
