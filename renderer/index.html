@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SereneMix</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts: Outfit -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- App Shell -->
+  <div class="app-container">
+    
+    <!-- Sidebar / Control Panel -->
+    <aside class="sidebar">
+      
+      <!-- Integrated Window Controls and App Logo -->
+      <div class="sidebar-top-bar">
+        <div class="app-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3V21M17 7V17M22 10V14M7 9V15M2 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>SereneMix</span>
+        </div>
+        
+        <div class="window-controls">
+          <button class="win-btn" id="btn-minimize" title="Küçült">
+            <svg width="10" height="1" viewBox="0 0 10 1" fill="none"><path d="M0 0H10V1H0V0Z" fill="currentColor"/></svg>
+          </button>
+          <button class="win-btn" id="btn-maximize" title="Ekranı Kapla">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0H10V10H0V0ZM1 1V9H9V1H1Z" fill="currentColor"/></svg>
+          </button>
+          <button class="win-btn close" id="btn-close" title="Kapat (Tepsiye Gizle)">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0L10 10M10 0L0 10" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-header">
+        <p>Kendi huzurlu karışımınızı oluşturun ve gevşeyin.</p>
+      </div>
+
+      <div class="global-controls">
+        <!-- Global Play Button -->
+        <button id="btn-global-play" class="control-btn primary">
+          <svg class="icon-play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="icon-pause hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <span>Tümünü Çal</span>
+        </button>
+
+        <!-- Custom Sleep Timer -->
+        <div class="sleep-timer-container">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Uyku Zamanlayıcı</span>
+          </div>
+          <div class="timer-controls">
+            <!-- Custom Dropdown Widget -->
+            <div id="custom-timer-select" class="custom-select-container">
+              <div id="timer-dropdown-trigger" class="custom-select-trigger">
+                <span id="timer-trigger-text">Kapat</span>
+                <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+              <div id="timer-dropdown-options" class="custom-select-options hidden">
+                <div class="custom-option active" data-value="0">Kapat</div>
+                <div class="custom-option" data-value="15">15 Dakika</div>
+                <div class="custom-option" data-value="30">30 Dakika</div>
+                <div class="custom-option" data-value="45">45 Dakika</div>
+                <div class="custom-option" data-value="60">1 Saat</div>
+                <div class="custom-option" data-value="90">1.5 Saat</div>
+                <div class="custom-option" data-value="120">2 Saat</div>
+              </div>
+            </div>
+
+            <!-- Active Timer Countdown Display -->
+            <div id="timer-display" class="timer-display hidden">
+              <span id="timer-time">00:00</span>
+              <button id="btn-cancel-timer" class="btn-icon" title="Zamanlayıcıyı İptal Et">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Sound / Open Folder -->
+        <div class="action-buttons">
+          <button id="btn-add-sound" class="action-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Yeni Ses Ekle</span>
+          </button>
+          <button id="btn-open-folder" class="action-btn secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span>Klasörü Aç</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Saved Mixes Section -->
+      <div class="saved-mixes-section">
+        <div class="section-title-container">
+          <div class="section-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span>Kayıtlı Karışımlarım</span>
+          </div>
+          <button id="btn-save-mix" class="btn-icon-text" title="Mevcut kombinasyonu kaydet">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            <span>Kaydet</span>
+          </button>
+        </div>
+        <div id="mixes-list" class="mixes-list">
+          <p class="empty-text">Henüz kayıtlı karışımınız yok.</p>
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button id="btn-about" class="btn-about-link">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span>Uygulama Hakkında</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <!-- Categories Filter / Header -->
+      <header class="workspace-header">
+        <div class="categories-tabs">
+          <button class="category-tab active" data-category="all">Tümü</button>
+          <button class="category-tab" data-category="Doğa">Doğa</button>
+          <button class="category-tab" data-category="Şehir">Şehir</button>
+          <button class="category-tab" data-category="Gürültü">Odak / Rahatlama</button>
+          <button class="category-tab" data-category="Genel">Diğer</button>
+        </div>
+        <div class="search-bar-container">
+          <input type="text" id="search-input" placeholder="Seslerde ara...">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+      </header>
+
+      <!-- Sounds Grid -->
+      <div id="sounds-grid" class="sounds-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Sesler yükleniyor...</p>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Edit Sound Details Modal -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Sesi Özelleştir</h2>
+        <button id="btn-close-modal" class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-filename">
+        
+        <div class="form-group">
+          <label for="edit-title">Ses Başlığı</label>
+          <input type="text" id="edit-title" class="form-control" placeholder="Örn. Yaz Yağmuru">
+        </div>
+
+        <div class="form-group">
+          <label for="edit-category">Kategori</label>
+          <select id="edit-category" class="form-control">
+            <option value="Doğa">Doğa</option>
+            <option value="Şehir">Şehir</option>
+            <option value="Gürültü">Odak / Rahatlama</option>
+            <option value="Genel">Diğer</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Kapak Görseli</label>
+          <div class="cover-uploader">
+            <div id="edit-cover-preview" class="cover-preview"></div>
+            <div class="uploader-buttons">
+              <button id="btn-select-cover" class="action-btn secondary">Görsel Seç</button>
+              <p class="help-text">JPG, PNG veya WebP formatında görsel yükleyin.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-save-modal" class="action-btn">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Mix Modal -->
+  <div id="save-mix-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Karışımı Kaydet</h2>
+        <button id="btn-close-mix-modal" class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="mix-name-input">Karışım İsmi</label>
+          <input type="text" id="mix-name-input" class="form-control" placeholder="Örn. Odaklanma Modu (Yağmur + Fırtına)">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-confirm-save-mix" class="action-btn">Karışımı Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="about-modal" class="modal-overlay hidden">
+    <div class="modal-card about-card">
+      <div class="modal-header">
+        <h2>Hakkında</h2>
+        <button id="btn-close-about-modal" class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body about-body">
+        <div class="developer-profile">
+          <div class="avatar-placeholder">M</div>
+          <h3>Maximus Decimus Meridius</h3>
+          <p class="dev-role">Geliştirici & Tasarımcı</p>
+        </div>
+        <hr class="divider">
+        <div class="about-info-list">
+          <div class="info-item">
+            <span class="info-label">GitHub</span>
+            <a href="#" id="link-github" class="info-value">github.com/MaximusPrime77</a>
+          </div>
+          <div class="info-item">
+            <span class="info-label">E-Posta</span>
+            <a href="#" id="link-email" class="info-value">b.maximus.prime@gmail.com</a>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Sürüm</span>
+            <span class="info-value">v1.0.0 (Premium Portable)</span>
+          </div>
+        </div>
+        <p class="about-description">Bu uygulama, huzurlu ve odaklanmış bir ortam yaratmak amacıyla geliştirilmiştir.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
