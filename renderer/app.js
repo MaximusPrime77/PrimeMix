@@ -109,9 +109,24 @@ async function loadLanguage(lang) {
       btnLangToggle.textContent = lang.toUpperCase();
     }
 
+    // Update Tray menu dynamically
+    window.api.setLanguage(lang);
+
     // Refresh UI elements
     updateGlobalPlayButtonState();
     loadSavedMixes();
+    renderSoundsGrid(); // Refresh names and categories instantly
+
+    // Also update maximize button title translation if maximized
+    const btnMaximize = document.getElementById('btn-maximize');
+    if (btnMaximize) {
+      const isMaximized = btnMaximize.innerHTML.includes('M2 0H10V8'); // check if using restore icon
+      if (isMaximized) {
+        btnMaximize.title = lang === 'tr' ? 'Aşağı Getir' : 'Restore';
+      } else {
+        btnMaximize.title = lang === 'tr' ? 'Ekranı Kapla' : 'Maximize';
+      }
+    }
   } catch (err) {
     console.error('Failed to load language files:', err);
   }
@@ -122,6 +137,17 @@ function initWindowControls() {
   btnMinimize.addEventListener('click', () => window.api.minimize());
   btnMaximize.addEventListener('click', () => window.api.maximize());
   btnClose.addEventListener('click', () => window.api.close());
+
+  // Synchronize maximize button icon with window state changes (maximize/restore)
+  window.api.onWindowStateChanged((state) => {
+    if (state === 'maximized') {
+      btnMaximize.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 0H10V8H8V10H0V2H2V0ZM3 3V9H9V3H3ZM8 2V1H3V2H8Z" fill="currentColor"/></svg>`;
+      btnMaximize.title = currentLanguage === 'tr' ? 'Aşağı Getir' : 'Restore';
+    } else {
+      btnMaximize.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0H10V10H0V0ZM1 1V9H9V1H1Z" fill="currentColor"/></svg>`;
+      btnMaximize.title = currentLanguage === 'tr' ? 'Ekranı Kapla' : 'Maximize';
+    }
+  });
 }
 
 // Load Application Settings (Startup setting)

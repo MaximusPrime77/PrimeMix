@@ -96,10 +96,10 @@ function checkAndMigrateSounds() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 980,
-    height: 680,
+    width: 1120,
+    height: 760,
     minWidth: 800,
-    minHeight: 550,
+    minHeight: 600,
     frame: false, // Frameless for premium borderless look
     transparent: false,
     backgroundColor: '#0b0c10',
@@ -119,6 +119,14 @@ function createWindow() {
     mainWindow.show();
   });
 
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window-state-changed', 'maximized');
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window-state-changed', 'restored');
+  });
+
   mainWindow.on('close', (event) => {
     if (!app.isQuiting) {
       event.preventDefault();
@@ -126,6 +134,35 @@ function createWindow() {
     }
     return false;
   });
+}
+
+function updateTrayMenu(lang) {
+  if (!appTray) return;
+
+  const isTr = lang === 'tr';
+  const showHideLabel = isTr ? 'Göster / Gizle' : 'Show / Hide';
+  const stopAllLabel = isTr ? 'Tüm Sesleri Durdur' : 'Stop All Sounds';
+  const exitLabel = isTr ? 'Çıkış' : 'Exit';
+
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'SereneMix', enabled: false },
+    { type: 'separator' },
+    { label: showHideLabel, click: () => toggleWindow() },
+    { label: stopAllLabel, click: () => {
+        if (mainWindow) {
+          mainWindow.webContents.send('stop-all-sounds');
+        }
+      }
+    },
+    { type: 'separator' },
+    { label: exitLabel, click: () => {
+        app.isQuiting = true;
+        app.quit();
+      }
+    }
+  ]);
+
+  appTray.setContextMenu(contextMenu);
 }
 
 function createTray() {
@@ -137,26 +174,10 @@ function createTray() {
   const icon = nativeImage.createFromPath(iconPath);
   appTray = new Tray(icon);
   
-  const contextMenu = Menu.buildFromTemplate([
-    { label: 'SereneMix', enabled: false },
-    { type: 'separator' },
-    { label: 'Göster / Gizle', click: () => toggleWindow() },
-    { label: 'Tüm Sesleri Durdur', click: () => {
-        if (mainWindow) {
-          mainWindow.webContents.send('stop-all-sounds');
-        }
-      }
-    },
-    { type: 'separator' },
-    { label: 'Çıkış', click: () => {
-        app.isQuiting = true;
-        app.quit();
-      }
-    }
-  ]);
+  // Default to English on startup
+  updateTrayMenu('en');
 
   appTray.setToolTip('SereneMix');
-  appTray.setContextMenu(contextMenu);
 
   appTray.on('double-click', () => {
     toggleWindow();
@@ -425,6 +446,10 @@ ipcMain.on('open-folder', () => {
 
 ipcMain.on('open-external', (event, url) => {
   shell.openExternal(url);
+});
+
+ipcMain.on('set-language', (event, lang) => {
+  updateTrayMenu(lang);
 });
 
 // Startup login settings

@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('api', {
   setStartupSettings: (openAtLogin) => ipcRenderer.invoke('set-startup-settings', openAtLogin),
   getSoundUrl: (filename) => ipcRenderer.invoke('get-sound-url', filename),
   deleteSound: (filename) => ipcRenderer.invoke('delete-sound', filename),
-  
+  setLanguage: (lang) => ipcRenderer.send('set-language', lang),
   
   // Window controls
   minimize: () => ipcRenderer.send('window-minimize'),
@@ -29,5 +29,11 @@ contextBridge.exposeInMainWorld('api', {
     const subscription = (event) => callback();
     ipcRenderer.on('sounds-changed', subscription);
     return () => ipcRenderer.removeListener('sounds-changed', subscription);
+  },
+
+  onWindowStateChanged: (callback) => {
+    const subscription = (event, state) => callback(state);
+    ipcRenderer.on('window-state-changed', subscription);
+    return () => ipcRenderer.removeListener('window-state-changed', subscription);
   }
 });

@@ -9,17 +9,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Window Controls (Floating at Top Right) -->
-  <div class="window-controls">
-    <button class="win-btn" id="btn-minimize" title="Minimize">
-      <svg width="10" height="1" viewBox="0 0 10 1" fill="none"><path d="M0 0H10V1H0V0Z" fill="currentColor"/></svg>
-    </button>
-    <button class="win-btn" id="btn-maximize" title="Maximize">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0H10V10H0V0ZM1 1V9H9V1H1Z" fill="currentColor"/></svg>
-    </button>
-    <button class="win-btn close" id="btn-close" title="Close (Hide to Tray)">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0L10 10M10 0L0 10" stroke="currentColor" stroke-width="1.2"/></svg>
-    </button>
+  <!-- Premium Custom Titlebar -->
+  <div class="titlebar">
+    <div class="titlebar-logo">
+      <img src="app_icon.png" class="titlebar-logo-img" alt="SereneMix">
+      <span>SereneMix</span>
+    </div>
+    <div class="window-controls">
+      <button class="win-btn" id="btn-minimize" title="Minimize">
+        <svg width="10" height="1" viewBox="0 0 10 1" fill="none"><path d="M0 0H10V1H0V0Z" fill="currentColor"/></svg>
+      </button>
+      <button class="win-btn" id="btn-maximize" title="Maximize">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0H10V10H0V0ZM1 1V9H9V1H1Z" fill="currentColor"/></svg>
+      </button>
+      <button class="win-btn close" id="btn-close" title="Close (Hide to Tray)">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M0 0L10 10M10 0L0 10" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- App Shell -->
@@ -27,14 +33,6 @@
     
     <!-- Sidebar / Control Panel -->
     <aside class="sidebar">
-      
-      <!-- Integrated App Logo -->
-      <div class="sidebar-top-bar">
-        <div class="app-logo">
-          <img src="app_icon.png" class="app-logo-img" alt="SereneMix">
-          <span>SereneMix</span>
-        </div>
-      </div>
 
       <div class="sidebar-header">
         <p data-i18n="slogan">Create your own peaceful mix and relax.</p>

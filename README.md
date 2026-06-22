@@ -26,7 +26,8 @@ It features a real-time directory watcher, allowing you to drop new audio files 
 
 - **Simultaneous Audio Playback**: Listen to multiple nature or white noise sounds at the same time to create your perfect ambient atmosphere.
 - **System Tray Integration**: SereneMix minimizes to the system tray so it can run and play sounds in the background. Right-click the tray icon to play/stop all sounds or exit.
-- **Premium Glassmorphic UI**: Enjoy a gorgeous, fully borderless window with smooth hover animations, custom equalizer wave visuals, and dynamic CSS gradients.
+- **Multi-language Support (EN/TR)**: Toggle between English and Turkish languages dynamically. The interface, settings, and sound names/categories translate instantly, and the system tray menu synchronizes with the active language.
+- **Premium Glassmorphic UI**: Enjoy a gorgeous, fully borderless window with a dedicated custom titlebar for native double-click to maximize/restore, smooth hover animations, custom equalizer wave visuals, and dynamic CSS gradients.
 - **Real-time Folder Syncing**: Simply drag and drop your music/ambient audio files into the configured folder, and they will show up instantly in the app grid.
 - **Sleep Timer (Fade-out)**: Fall asleep peacefully. Set a sleep timer from 15 minutes to 2 hours. When the time runs out, the volume fades out smoothly over 3 seconds before stopping.
 - **Saved Mixes**: Save your favorite combinations of sounds and volume configurations so you can restore them with a single click.
