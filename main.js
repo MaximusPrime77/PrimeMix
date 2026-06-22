@@ -22,6 +22,78 @@ if (!fs.existsSync(COVERS_DIR)) {
   fs.mkdirSync(COVERS_DIR, { recursive: true });
 }
 
+function copyFolderSync(from, to) {
+  if (!fs.existsSync(to)) {
+    fs.mkdirSync(to, { recursive: true });
+  }
+  const files = fs.readdirSync(from);
+  for (const file of files) {
+    const fromPath = path.join(from, file);
+    const toPath = path.join(to, file);
+    const stat = fs.statSync(fromPath);
+    if (stat.isDirectory()) {
+      copyFolderSync(fromPath, toPath);
+    } else {
+      if (!fs.existsSync(toPath)) {
+        fs.copyFileSync(fromPath, toPath);
+      }
+    }
+  }
+}
+
+function checkAndMigrateSounds() {
+  try {
+    // Only migrate if we are packaged
+    if (!isPackaged) return;
+
+    // Check if SOUNDS_DIR has any audio files
+    const audioExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
+    let hasAudio = false;
+    if (fs.existsSync(SOUNDS_DIR)) {
+      const files = fs.readdirSync(SOUNDS_DIR);
+      hasAudio = files.some(file => audioExtensions.includes(path.extname(file).toLowerCase()));
+    }
+
+    if (!hasAudio) {
+      console.log('SereneMix_Data is empty. Starting sound migration...');
+      
+      // Candidate 1: The unpacked temp directory (extraFiles location for portable target)
+      const tempExtraDir = path.join(path.dirname(process.execPath), 'SereneMix_Data');
+      
+      // Candidate 2: Dev local directory (fallback)
+      const devDir = 'C:/Users/MAXIMUS/PROJECTS/Huzur_Sesleri';
+      
+      let sourceDir = null;
+      
+      if (fs.existsSync(tempExtraDir)) {
+        const tempFiles = fs.readdirSync(tempExtraDir);
+        const tempHasAudio = tempFiles.some(file => audioExtensions.includes(path.extname(file).toLowerCase()));
+        if (tempHasAudio) {
+          sourceDir = tempExtraDir;
+        }
+      }
+      
+      if (!sourceDir && fs.existsSync(devDir)) {
+        const devFiles = fs.readdirSync(devDir);
+        const devHasAudio = devFiles.some(file => audioExtensions.includes(path.extname(file).toLowerCase()));
+        if (devHasAudio) {
+          sourceDir = devDir;
+        }
+      }
+      
+      if (sourceDir) {
+        console.log(`Migrating sounds from ${sourceDir} to ${SOUNDS_DIR}`);
+        copyFolderSync(sourceDir, SOUNDS_DIR);
+        console.log('Migration completed successfully!');
+      } else {
+        console.log('No default sound source found for migration.');
+      }
+    }
+  } catch (error) {
+    console.error('Error during sound migration:', error);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 980,
@@ -108,6 +180,7 @@ function createDefaultIcon(filePath) {
 
 // App lifecycle
 app.whenReady().then(() => {
+  checkAndMigrateSounds();
   createWindow();
   createTray();
   startWatcher();

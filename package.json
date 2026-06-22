@@ -41,6 +41,15 @@
       "tray_icon.png",
       "app_icon.png"
     ],
+    "extraFiles": [
+      {
+        "from": "C:/Users/MAXIMUS/PROJECTS/Huzur_Sesleri",
+        "to": "SereneMix_Data",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "asar": true
   }
 }
