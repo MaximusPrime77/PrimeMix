@@ -92,3 +92,23 @@ SereneMix/
       ├── index.html      # Arayüz iskeleti
       ├── styles.css      # Özelleştirilmiş glassmorphic CSS stilleri
       └── app.js          # Oynatma mantığı, zamanlayıcı, durum yönetimi ve kullanıcı etkileşimleri
+---
+
+Kullanılan Teknolojiler 💻
+Electron (v31.0.0)
+
+Node.js (Yerleşik fs modülü ve dizin izleme)
+
+HTML5 Audio API (Döngüsel oynatma, oynat/durdur kontrolleri, ses haritalama)
+
+Vanilla CSS (Özel CSS Gradyanları, Glassmorphism, Backdrop filtreleri)
+
+Yazar 👤
+Maximus Decimus Meridius tarafından ❤️ ile geliştirildi ve tasarlandı.
+
+GitHub: @MaximusPrime77
+
+E-posta: b.maximus.prime@gmail.com
+
+Lisans 📄
+Bu proje MIT Lisansı ile lisanslanmıştır - detaylar için LICENSE dosyasına göz atabilirsiniz.
