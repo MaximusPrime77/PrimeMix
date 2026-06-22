@@ -60,23 +60,23 @@ Geliştirme modunda başlatmak için:
 
 Bash
 npm start
-Dağıtım / Taşınabilir Sürüm Oluşturma
+Dağıtım / Taşınabilir ZIP Paketini Oluşturma
 Uygulamayı Windows için taşınabilir bir arşiv paketi haline getirmek için:
 
 Bash
 npm run build
-İşlem tamamlandığında, paketlenmiş sürüm dist/ dizini altında yer alacaktır.
+İşlem tamamlandığında, paketlenmiş .zip dosyası doğrudan dist/ dizini altında yer alacaktır.
 
 [!IMPORTANT]
-Kullanım Kılavuzu (Portatif Zip Sürümü):
+Kullanım Kılavuzu (Taşınabilir Sürüm):
 
-Kurulum Gerektirmez: SereneMix-1.0.0-win.zip arşivi, uygulamanın çalışması için gerekli tüm dosyaları ve varsayılan sesleri içeren SereneMix_Data klasörünü önceden paketlenmiş olarak barındırır.
+Kurulum Gerektirmez: İndirdiğiniz SereneMix-1.0.0-win.zip arşivi, uygulamanın çalışması için gerekli tüm bağımlılıkları ve varsayılan sesleri içeren SereneMix_Data klasörünü önceden paketlenmiş olarak barındırır.
 
-Doğrudan Çalıştırma: İndirdiğiniz .zip dosyasını bilgisayarınızda dilediğiniz bir klasöre ayıklayın ve içerisindeki SereneMix.exe dosyasına çift tıklayarak uygulamayı anında başlatın.
+Doğrudan Çalıştırma: ZIP dosyasını bilgisayarınızda dilediğiniz bir klasöre (örn: C:\Apps\SereneMix\) ayıklayın ve içerisindeki SereneMix.exe dosyasına çift tıklayarak uygulamayı anında başlatın.
 
-Tam Taşınabilirlik: Tüm sesleriniz, kapak görselleriniz ve kullanıcı yapılandırmalarınız bu klasör içerisinde saklanır. Uygulamayı başka bir bilgisayara taşımak isterseniz, yalnızca ayıkladığınız bu klasörü kopyalamanız yeterlidir.
+Tam Taşınabilirlik (Portable): Tüm sesleriniz, özel kapak görselleriniz ve kullanıcı yapılandırmalarınız bu klasör içerisinde saklanır. Uygulamayı başka bir bilgisayara taşımak isterseniz, yalnızca ayıkladığınız bu klasörü kopyalamanız yeterlidir.
 
-Kolay Erişim: Kolay erişim için SereneMix.exe dosyasına sağ tıklayıp masaüstünüze bir kısayol oluşturabilirsiniz.
+Masaüstü Kısayolu: Kolay erişim sağlamak için klasör içindeki SereneMix.exe dosyasına sağ tıklayıp masaüstünüze bir kısayol oluşturabilirsiniz.
 
 Proje Yapısı 📁
 SereneMix/
