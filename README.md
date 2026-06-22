@@ -1,8 +1,20 @@
-# SereneMix 🍃
+<p align="center">
+  <img src="app_icon.png" width="128" alt="SereneMix Logo" style="border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Electron](https://img.shields.io/badge/Electron-v31.0.0-blue.svg)](https://www.electronjs.org/)
-[![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)]()
+<h1 align="center">SereneMix</h1>
+
+<p align="center">
+  <strong>Premium Ambient Sound Mixer for Windows Desktop</strong>
+</p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-v31.0.0-blue.svg" alt="Electron"></a>
+  <img src="https://img.shields.io/badge/Platform-Windows-lightgrey.svg" alt="Platform">
+</p>
+
+<br>
 
 **SereneMix** is a lightweight, premium-looking, and borderless ambient sound mixer application for the Windows Desktop. Inspired by Microsoft Store's Ambie app, it allows you to play multiple relaxing sounds simultaneously, adjust their individual volume levels, save custom mixes, set a sleep timer, and customize titles and cover art.
 
