@@ -44,7 +44,7 @@
     ],
     "extraFiles": [
       {
-        "from": "../SereneMixSound",
+        "from": "../PrimeMixSound",
         "to": "PrimeMix_Data",
         "filter": [
           "**/*"

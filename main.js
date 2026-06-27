@@ -15,7 +15,7 @@ const EXE_DIR = process.env.PORTABLE_EXECUTABLE_DIR || path.dirname(process.exec
 
 const SOUNDS_DIR = isPackaged
   ? path.join(EXE_DIR, 'PrimeMix_Data')
-  : path.resolve(__dirname, '..', 'SereneMixSound');
+  : path.resolve(__dirname, '..', 'PrimeMixSound');
 
 const METADATA_PATH = path.join(SOUNDS_DIR, 'metadata.json');
 const COVERS_DIR = path.join(SOUNDS_DIR, 'covers');
@@ -67,7 +67,7 @@ async function checkAndMigrateSounds() {
       const tempExtraDir = path.join(path.dirname(process.execPath), 'PrimeMix_Data');
       
       // Candidate 2: Dev local directory (fallback)
-      const devDir = path.resolve(__dirname, '..', 'SereneMixSound');
+      const devDir = path.resolve(__dirname, '..', 'PrimeMixSound');
       
       let sourceDir = null;
       
