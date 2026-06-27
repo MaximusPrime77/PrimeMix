@@ -12,29 +12,78 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-v31.0.0-blue.svg" alt="Electron"></a>
   <img src="https://img.shields.io/badge/Platform-Windows-lightgrey.svg" alt="Platform">
+  <img src="https://img.shields.io/badge/Version-1.0.0-brightgreen.svg" alt="Version">
 </p>
 
 <br>
 
-**PrimeMix** is a premium ambient sound mixer for Windows desktop, inspired by modern relaxing audio applications. It allows you to play up to 3 relaxing sounds simultaneously, adjust individual volume levels with smooth audio crossfading, save custom mixes, set a sleep timer, and customize sound titles and cover art.
-
-It features a real-time directory watcher, allowing you to drop new audio files (.mp3, .wav, .ogg, .flac, .m4a) directly into your local sounds folder and listen to them instantly without restarting the app.
+**PrimeMix** is a premium ambient sound mixer for Windows desktop, inspired by modern relaxing audio applications like Ambie. It allows you to play up to 3 relaxing sounds simultaneously, adjust individual volume levels with smooth audio crossfading, save and restore custom mixes, set a sleep/focus timer, and fully customize sound titles, categories and cover art.
 
 ---
 
 ## Key Features 🚀
 
-- **Smart Simultaneous Audio Playback (Max 3 Sounds)**: Play up to 3 nature or white noise sounds simultaneously to create your ideal ambient atmosphere without cluttering the audio space.
-- **Compact & Sleek Grid Layout**: Redesigned compact sound cards allow you to view and control significantly more sounds on your screen at once.
-- **Smooth Audio Crossfading**: Enjoy seamless audio transitions with smooth fade-in and fade-out volume curves when playing, pausing, or changing sounds.
-- **Enhanced Security & Performance**: Powered by Electron's secure custom `media://` protocol and asynchronous non-blocking I/O routines.
-- **System Tray Integration**: PrimeMix minimizes to the system tray so it can run and play sounds in the background. Right-click the tray icon to play/stop all sounds or exit.
-- **Multi-language Support (EN/TR)**: Toggle between English and Turkish languages dynamically. The interface, settings, and sound names/categories translate instantly, and the system tray menu synchronizes with the active language.
-- **Premium Glassmorphic UI**: Enjoy a gorgeous, fully borderless window with a dedicated custom titlebar for native double-click to maximize/restore, smooth hover animations, custom equalizer wave visuals, and dynamic CSS gradients in glowing blue-purple tones.
-- **Real-time Folder Syncing**: Simply drag and drop your music/ambient audio files into the configured folder, and they will show up instantly in the app grid.
-- **Sleep Timer (Fade-out)**: Fall asleep peacefully. Set a sleep timer from 15 minutes to 2 hours. When the time runs out, the volume fades out smoothly before stopping.
-- **Saved Mixes**: Save your favorite combinations of sounds and volume configurations so you can restore them with a single click.
-- **Customizable Sounds**: Personalize sound titles, assign categories, and upload custom cover art directly within the application.
+### 🎵 Playback & Audio
+- **Smart Simultaneous Audio Playback (Max 3 Sounds)**: Play up to 3 ambient sounds at once to create your ideal atmosphere.
+- **Smooth Audio Crossfading**: Seamless fade-in and fade-out transitions when playing, pausing, or switching sounds.
+- **3-State Global Play Button**: Intelligently shows **Play All**, **Pause All**, or **Resume** depending on the current playback state.
+- **Individual Volume Control**: Per-sound volume sliders with debounced disk saving (no constant I/O).
+- **Media Key Support**: Control playback using your keyboard's `Play/Pause` media key or `Ctrl+Alt+P` global shortcut.
+
+### ⭐ Favorites
+- Mark any sound as a favorite with a single click on the heart icon.
+- Filter the sound grid to show only your favorites via the **⭐ Favorites** category tab.
+- Favorites are persisted across sessions via localStorage.
+
+### ⏱ Sleep Timer
+- Set a countdown from **15 minutes to 2 hours**.
+- When the timer expires, sounds **smoothly pause** (not deleted) — resume anytime after waking up.
+- Cancel the timer at any time with one click.
+
+### 🍅 Focus Pomodoro Timer
+- Built-in **Pomodoro technique** timer with **Work (25 min)** and **Break (5 min)** modes.
+- Start, pause, and reset controls.
+- Automatically switches to the next mode when a session completes, with a toast notification.
+
+### 💾 Saved Mixes & Import/Export
+- Save your current sound combination (including volumes) as a named **Mix**.
+- Restore any saved mix with one click — sounds load sequentially after a smooth fade-out.
+- **Export** all your mixes to a `.json` file to share or back up.
+- **Import** mixes from a `.json` file on any PrimeMix installation.
+- Graceful handling: if a mix contains missing files, you get a clear warning toast.
+
+### 🪟 Mini Mode (Compact Overlay)
+- Collapse the app into a **tiny floating overlay** (340×240px) that stays always-on-top.
+- Shows active sounds with individual play/pause and remove buttons.
+- Exit mini mode to restore the full interface with all your settings intact.
+
+### 🎨 Dynamic Ambient Atmosphere
+- The app background color **shifts dynamically** based on which sounds are currently playing:
+  - 🌿 Nature sounds → cool green glow
+  - 🎵 Music/Instrumental → neon purple
+  - 🏙 Urban/Noise → warm amber
+  - 🔮 Default → indigo blue
+
+### 🗂 Sound Management
+- **Add Sounds**: Import any `.mp3`, `.wav`, `.ogg`, `.flac`, or `.m4a` file directly via dialog.
+- **Customize**: Edit sound title, category, and cover art from within the app.
+- **Delete**: Remove sounds with confirmation dialog.
+- **Open Folder**: Jump to the sounds directory in Explorer.
+- **Real-time Folder Sync**: Drop audio files into the sounds folder — they appear instantly without restarting.
+
+### 🌐 Multi-language Support (EN / TR)
+- Toggle between **English** and **Turkish** with a single button.
+- All UI text, category labels, sound names, and system tray menu update instantly.
+
+### 🖥 System Tray Integration
+- PrimeMix lives in the system tray when minimized or closed.
+- Right-click the tray icon to **Play/Stop All**, or **Quit**.
+
+### 🎨 Premium Glassmorphic UI
+- Fully borderless frameless window with a custom titlebar.
+- Hover animations, equalizer wave visuals on active cards.
+- Category filter tabs, search bar, and compact grid layout.
+- All modals close on overlay click (Escape-friendly UX).
 
 ---
 
@@ -73,19 +122,18 @@ npm start
 ```
 
 ### Packaging / Building Portable Executable
-To package the app into a single, standalone, portable `.exe` file for Windows:
+To package the app into a standalone portable `.exe` for Windows:
 ```bash
 npm run build
 ```
 Once the build completes, your portable executable will be located in the `dist/` directory.
 
 > [!IMPORTANT]
-> **How to Run the App:**
-> 
-> ### 📌 For Portable Version (`PrimeMix.1.0.0.portable.exe`):
-> - **Dedicated Folder Required:** To avoid cluttering your Desktop or Downloads folder, place `PrimeMix.1.0.0.portable.exe` inside a dedicated folder. When executed, it will automatically create a folder named `PrimeMix_Data` in the same directory to store your audio files, custom cover art, and configuration data.
-> - **First Launch Delay:** On the very first launch, the application will take a few seconds to extract and copy the default sounds to the `PrimeMix_Data` folder.
-> - **Portability:** If you want to carry your custom sounds and configurations to another computer, simply copy both the `.exe` file and its adjacent `PrimeMix_Data` folder together.
+> **How to Run the Portable Version (`PrimeMix.1.0.0.portable.exe`):**
+>
+> - **Dedicated Folder Required:** Place the `.exe` inside a dedicated folder. On first launch it will create a `PrimeMix_Data` folder in the same directory to store audio files, cover art, and configuration.
+> - **First Launch Delay:** On the very first launch, the app will take a few seconds to copy the default sounds to `PrimeMix_Data`.
+> - **Portability:** To carry your setup to another computer, copy both the `.exe` and the adjacent `PrimeMix_Data` folder together.
 
 ---
 
@@ -93,25 +141,30 @@ Once the build completes, your portable executable will be located in the `dist/
 
 ```
 PrimeMix/
-├── package.json        # Build config & dependencies
-├── main.js             # Electron main process (system tray, window, IPC, file watcher, media:// protocol)
-├── preload.js          # Electron secure IPC bridge
-├── app_icon.png        # High-res blue-purple app logo
-├── tray_icon.png       # Transparent tray icon
-└── renderer/           # Frontend assets
-    ├── index.html      # UI Layout & Modals
-    ├── styles.css      # Custom glassmorphic styling & compact card grid
-    └── app.js          # Playback logic, max 3 sound limit, timer, crossfading & UI interactions
+├── package.json             # Build config & dependencies
+├── main.js                  # Electron main process (tray, window, IPC, watcher, media:// protocol)
+├── preload.js               # Secure IPC bridge (contextBridge)
+├── app_icon.png             # High-res blue-purple app logo
+├── tray_icon.png            # System tray icon
+└── renderer/                # Frontend assets
+    ├── index.html           # UI layout, all modals (Edit, SaveMix, About, Confirm)
+    ├── styles.css           # Glassmorphic styling, compact card grid, Pomodoro, Mini Mode
+    ├── app.js               # Full playback engine, Favorites, Pomodoro, Sleep Timer,
+    │                        #   Mini Mode, Import/Export, Dynamic Atmosphere, i18n
+    └── locales/
+        ├── tr.json          # Turkish translations
+        └── en.json          # English translations
 ```
 
 ---
 
 ## Technologies Used 💻
 
-- **Electron** (v31.0.0)
-- **Node.js** (Native `fs` module, async I/O & directory watching)
-- **HTML5 Audio API** (Looping, play/pause controls, volume mapping & crossfading)
-- **Vanilla CSS** (Custom CSS Gradients, Glassmorphism, Backdrop filters)
+- **Electron** (v31.0.0) — Desktop shell, IPC, system tray, global shortcuts
+- **Node.js** — Native `fs` module, async I/O, directory watching
+- **HTML5 Audio API** — Looping, crossfading, volume control
+- **Vanilla CSS** — Glassmorphism, backdrop filters, CSS animations
+- **localStorage** — Persistent favorites, mixes, language preference
 
 ---
 
