@@ -17,11 +17,15 @@
 
 <br>
 
-**PrimeMix** is a premium ambient sound mixer for Windows desktop, inspired by modern relaxing audio applications like Ambie. It allows you to play up to 3 relaxing sounds simultaneously, adjust individual volume levels with smooth audio crossfading, save and restore custom mixes, set a sleep/focus timer, and fully customize sound titles, categories and cover art.
+**PrimeMix** is a premium ambient sound mixer for Windows desktop, inspired by modern relaxing audio applications like Ambie. It comes pre-packaged with a curated library of **170+ handpicked, high-quality relaxing sounds** spanning across multiple categories. The app allows you to play up to 3 sounds simultaneously, adjust individual volume levels with smooth audio crossfading, play sequentially in playlist mode, save custom mixes, set sleep/focus timers, and fully customize sound titles, categories, and cover art.
 
 ---
 
 ## Key Features 🚀
+
+### 📚 Rich Sound Library
+- **170+ Curated Ambient Sounds**: Pre-loaded with high-fidelity, handpicked audio tracks designed specifically for deep focus, anxiety relief, meditation, and restful sleep.
+- **Diverse Categories**: Easily browse through Nature, Urban, Animals, Music, Instrumental, and Noise categories.
 
 ### 🎵 Playback & Audio
 - **Smart Simultaneous Audio Playback (Max 3 Sounds)**: Play up to 3 ambient sounds at once to create your ideal atmosphere.
