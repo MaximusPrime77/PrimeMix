@@ -146,19 +146,20 @@ Start the app in development mode:
 npm start
 ```
 
-### Packaging / Building Portable Executable
-To package the app into a standalone portable `.exe` for Windows:
+### Packaging / Building Zip Release
+To package the app into a standalone distributable ZIP and Portable version for Windows:
 ```bash
 npm run build
 ```
-Once the build completes, your portable executable will be located in the `dist/` directory.
+Once the build completes, you will find the standalone ZIP archive (`PrimeMix-1.0.0-win.zip`) in the `dist/` directory.
 
-> [!IMPORTANT]
-> **How to Run the Portable Version (`PrimeMix.1.0.0.portable.exe`):**
->
-> - **Dedicated Folder Required:** Place the `.exe` inside a dedicated folder. On first launch it will create a `PrimeMix_Data` folder in the same directory to store audio files, cover art, and configuration.
-> - **First Launch Delay:** On the very first launch, the app will take a few seconds to copy the default sounds to `PrimeMix_Data`.
-> - **Portability:** To carry your setup to another computer, copy both the `.exe` and the adjacent `PrimeMix_Data` folder together.
+### How to Install & Run (ZIP Version)
+1. Extract the **`PrimeMix-1.0.0-win.zip`** file into a folder of your choice (e.g., `C:\Apps\PrimeMix\`).
+2. Double-click **`PrimeMix.exe`** inside the extracted folder to launch the app instantly.
+
+> [!NOTE]
+> **Why Zip is Recommended:**
+> Running the ZIP version is highly recommended because it starts instantly from the local directory with no temporary directory extraction delays, ensuring a premium, zero-wait user experience.
 
 ---
 
