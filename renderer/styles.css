@@ -132,18 +132,28 @@ body {
 .sidebar::-webkit-scrollbar,
 .main-content::-webkit-scrollbar,
 .mixes-list::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
+  height: 10px;
+}
+.sidebar::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track,
+.mixes-list::-webkit-scrollbar-track {
+  background: transparent;
 }
 .sidebar::-webkit-scrollbar-thumb,
 .main-content::-webkit-scrollbar-thumb,
 .mixes-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.22);
   border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 .sidebar::-webkit-scrollbar-thumb:hover,
 .main-content::-webkit-scrollbar-thumb:hover,
 .mixes-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 /* Global Controls */
@@ -560,7 +570,7 @@ body {
 /* Sounds Grid */
 .sounds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   grid-auto-rows: max-content;
   gap: 14px;
   flex: 1;
@@ -572,7 +582,7 @@ body {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 14px;
-  padding: 10px;
+  padding: 10px 10px 14px 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -802,6 +812,8 @@ body {
   margin-top: auto;
   opacity: 0.6;
   transition: opacity 0.2s ease;
+  padding-top: 4px;
+  padding-bottom: 2px;
 }
 
 .sound-card.active .volume-container,
@@ -812,8 +824,8 @@ body {
 .volume-slider {
   flex: 1;
   -webkit-appearance: none;
-  height: 4px;
-  border-radius: 2px;
+  height: 6px;
+  border-radius: 3px;
   background: rgba(255, 255, 255, 0.1);
   outline: none;
   cursor: pointer;
@@ -822,12 +834,13 @@ body {
 
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--text-primary);
   cursor: pointer;
   transition: transform 0.15s, background-color 0.15s;
+  margin-top: -3px;
 }
 
 .volume-slider:hover::-webkit-slider-thumb {

@@ -118,8 +118,8 @@ async function checkAndMigrateSounds() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1120,
-    height: 760,
+    width: 1160,
+    height: 840,
     minWidth: 340,
     minHeight: 220,
     frame: false,
@@ -246,6 +246,10 @@ app.whenReady().then(() => {
   });
 });
 
+app.on('before-quit', () => {
+  app.isQuiting = true;
+});
+
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
 });
@@ -263,9 +267,9 @@ function startWatcher() {
     fs.watch(SOUNDS_DIR, (eventType, filename) => {
       if (!filename) return;
       const ext = path.extname(filename).toLowerCase();
-      const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac', '.json'];
+      const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
       
-      if (validExtensions.includes(ext) || filename === 'metadata.json') {
+      if (validExtensions.includes(ext)) {
         if (watchTimeout) clearTimeout(watchTimeout);
         watchTimeout = setTimeout(() => {
           if (mainWindow && !mainWindow.isDestroyed()) {
@@ -329,13 +333,13 @@ ipcMain.handle('save-sound-metadata', async (event, filename, data) => {
     let metadata = {};
     if (fs.existsSync(METADATA_PATH)) {
       try {
-        const metaContent = await fs.promises.readFile(METADATA_PATH, 'utf-8');
+        const metaContent = fs.readFileSync(METADATA_PATH, 'utf-8');
         metadata = JSON.parse(metaContent);
       } catch (e) {}
     }
 
     metadata[filename] = { ...(metadata[filename] || {}), ...data };
-    await fs.promises.writeFile(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
+    fs.writeFileSync(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -346,13 +350,13 @@ ipcMain.handle('delete-sound', async (event, filename) => {
   try {
     const filePath = path.join(SOUNDS_DIR, filename);
     if (fs.existsSync(filePath)) {
-      await fs.promises.unlink(filePath);
+      fs.unlinkSync(filePath);
     }
 
     let metadata = {};
     if (fs.existsSync(METADATA_PATH)) {
       try {
-        const metaContent = await fs.promises.readFile(METADATA_PATH, 'utf-8');
+        const metaContent = fs.readFileSync(METADATA_PATH, 'utf-8');
         metadata = JSON.parse(metaContent);
       } catch (e) {}
     }
@@ -360,12 +364,12 @@ ipcMain.handle('delete-sound', async (event, filename) => {
     if (metadata[filename] && metadata[filename].cover) {
       const coverPath = path.join(SOUNDS_DIR, metadata[filename].cover);
       if (fs.existsSync(coverPath)) {
-        try { await fs.promises.unlink(coverPath); } catch (e) {}
+        try { fs.unlinkSync(coverPath); } catch (e) {}
       }
     }
 
     delete metadata[filename];
-    await fs.promises.writeFile(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
+    fs.writeFileSync(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -415,13 +419,13 @@ ipcMain.handle('add-cover-dialog', async (event, soundFilename) => {
     let metadata = {};
     if (fs.existsSync(METADATA_PATH)) {
       try {
-        const metaContent = await fs.promises.readFile(METADATA_PATH, 'utf-8');
+        const metaContent = fs.readFileSync(METADATA_PATH, 'utf-8');
         metadata = JSON.parse(metaContent);
       } catch (e) {}
     }
 
     metadata[soundFilename] = { ...(metadata[soundFilename] || {}), cover: `covers/${coverFilename}` };
-    await fs.promises.writeFile(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
+    fs.writeFileSync(METADATA_PATH, JSON.stringify(metadata, null, 2), 'utf-8');
 
     return { success: true, coverPath: `covers/${coverFilename}` };
   } catch (error) {
@@ -486,7 +490,7 @@ ipcMain.handle('toggle-mini-mode', async () => {
     if (normalBounds) {
       mainWindow.setBounds(normalBounds);
     } else {
-      mainWindow.setBounds({ width: 1120, height: 760 });
+      mainWindow.setBounds({ width: 1160, height: 840 });
     }
   }
 

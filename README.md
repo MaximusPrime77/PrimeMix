@@ -26,9 +26,15 @@
 ### 🎵 Playback & Audio
 - **Smart Simultaneous Audio Playback (Max 3 Sounds)**: Play up to 3 ambient sounds at once to create your ideal atmosphere.
 - **Smooth Audio Crossfading**: Seamless fade-in and fade-out transitions when playing, pausing, or switching sounds.
-- **3-State Global Play Button**: Intelligently shows **Play All**, **Pause All**, or **Resume** depending on the current playback state.
+- **3-State Global Play Button**: Intelligently shows **Play All**, **Pause All**, or **Resume** depending on the current playback state (with smart toast guidance if no sounds are selected).
 - **Individual Volume Control**: Per-sound volume sliders with debounced disk saving (no constant I/O).
 - **Media Key Support**: Control playback using your keyboard's `Play/Pause` media key or `Ctrl+Alt+P` global shortcut.
+
+### 🔀 Playlist Mode (Sequential Play)
+- **Sequential Playback**: Automatically plays sounds one after another (loop is disabled on tracks).
+- **Smooth Transition**: A 2-second crossfade/fade duration between tracks when auto-advancing to the next sound.
+- **Category Filter Integration**: Respects the active category filter (e.g., sequentially plays only your "Nature" or "Music" sounds).
+- **Single Playback Focus**: Limits playback to one active sound to maintain focus on the playing sequence.
 
 ### ⭐ Favorites
 - Mark any sound as a favorite with a single click on the heart icon.

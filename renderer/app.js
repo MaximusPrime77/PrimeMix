@@ -7,6 +7,7 @@ let favorites = JSON.parse(localStorage.getItem('primemix_favorites') || '[]');
 let currentCategory = 'all';
 let searchQuery = '';
 let isGlobalPlaying = false;
+let isPlaylistMode = false;
 
 // Sleep Timer State
 let sleepTimer = null;
@@ -330,7 +331,7 @@ function renderSoundsGrid() {
       const mediaUrl = getMediaUrl(fullCoverPath);
       coverStyle = `background-image: url('${encodeURI(mediaUrl)}');`;
     } else {
-      coverStyle = `background: ${sound.color};`;
+      coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
     }
 
     const transKey = catKeyMap[sound.category] || 'cat_other';
@@ -454,8 +455,12 @@ async function toggleSound(filename) {
   if (isCurrentlyActive) {
     if (isCurrentlyPaused) {
       try {
+        activeAudio[filename].loop = !isPlaylistMode;
         await activeAudio[filename].play();
         fadeInAudio(activeAudio[filename], sound.volume);
+        if (isPlaylistMode) {
+          setupPlaylistEndedEvent(filename);
+        }
       } catch (err) {
         showToast(translations['alert_audio_error'] || 'Ses dosyası çalınamadı.', 'error');
         return;
@@ -473,12 +478,15 @@ async function toggleSound(filename) {
   } else {
     const mediaUrl = getMediaUrl(sound.filePath);
     const audio = new Audio(mediaUrl);
-    audio.loop = true;
+    audio.loop = !isPlaylistMode;
     
     try {
       await audio.play();
       activeAudio[filename] = audio;
       fadeInAudio(audio, sound.volume);
+      if (isPlaylistMode) {
+        setupPlaylistEndedEvent(filename);
+      }
     } catch (err) {
       showToast(translations['alert_audio_error'] || 'Ses dosyası çalınamadı.', 'error');
       return;
@@ -709,15 +717,8 @@ function initEventListeners() {
           }
         });
       } else {
-        // Hiç aktif ses yok → ilk 3 çalmayan sesi başlat
-        let started = 0;
-        for (let i = 0; i < sounds.length && started < 3; i++) {
-          const s = sounds[i];
-          if (!activeAudio[s.filename]) {
-            toggleSound(s.filename);
-            started++;
-          }
-        }
+        // Hiç aktif ses yok → ilk 3 çalmak yerine kullanıcıya uyarı göster
+        showToast(translations['alert_no_active_sounds'] || 'Çalınacak aktif ses bulunamadı. Lütfen listeden sesleri açın.', 'warning');
       }
     }
   });
@@ -837,6 +838,32 @@ function initEventListeners() {
   btnSaveModal.addEventListener('click', saveEditDetails);
   btnSelectCover.addEventListener('click', uploadCoverImage);
 
+  const chkPlaylistMode = document.getElementById('chk-playlist-mode');
+  if (chkPlaylistMode) {
+    chkPlaylistMode.addEventListener('change', (e) => {
+      isPlaylistMode = e.target.checked;
+      if (isPlaylistMode) {
+        // Çalan seslerden sadece 1 tanesini bırakıp diğerlerini temizle
+        const activeKeys = Object.keys(activeAudio);
+        if (activeKeys.length > 1) {
+          activeKeys.slice(1).forEach(filename => {
+            removeActiveSound(filename);
+          });
+        }
+        // Kalan sesin loop özelliğini kapat ve ended olayını kur
+        if (activeKeys.length > 0 && activeAudio[activeKeys[0]]) {
+          activeAudio[activeKeys[0]].loop = false;
+          setupPlaylistEndedEvent(activeKeys[0]);
+        }
+      } else {
+        // Playlist modu kapatıldığında tüm aktif seslerin loop özelliğini geri aç
+        Object.keys(activeAudio).forEach(filename => {
+          if (activeAudio[filename]) activeAudio[filename].loop = true;
+        });
+      }
+    });
+  }
+
   const chkStartup = document.getElementById('chk-startup');
   if (chkStartup) {
     chkStartup.addEventListener('change', async (e) => {
@@ -926,7 +953,11 @@ function loadSavedMixes() {
     item.className = 'mix-item';
     const soundTitles = mix.sounds.map(s => {
       const originalSound = sounds.find(orig => orig.filename === s.filename);
-      return originalSound ? originalSound.title : s.filename;
+      if (originalSound) {
+        const titleKey = `sound_${originalSound.filename.replace(/\.[^/.]+$/, "")}`;
+        return translations[titleKey] || originalSound.title;
+      }
+      return s.filename;
     });
     item.innerHTML = `
       <div class="mix-info" onclick="applyMix('${mix.id}')">
@@ -1015,8 +1046,11 @@ function updateCoverPreview(sound) {
     editCoverPreview.style.backgroundImage = `url('${encodeURI(mediaUrl)}')`;
     editCoverPreview.style.background = '';
   } else {
-    editCoverPreview.style.backgroundImage = '';
-    editCoverPreview.style.background = sound.color;
+    editCoverPreview.style.backgroundImage = `url('app_icon.png')`;
+    editCoverPreview.style.backgroundSize = 'contain';
+    editCoverPreview.style.backgroundRepeat = 'no-repeat';
+    editCoverPreview.style.backgroundPosition = 'center';
+    editCoverPreview.style.backgroundColor = 'rgba(255,255,255,0.03)';
   }
 }
 
@@ -1105,7 +1139,7 @@ function updateActiveSoundsPanel() {
     if (sound.cover) {
       const fullCoverPath = `${sound.filePath.replace(sound.filename, '')}${sound.cover}`;
       coverStyle = `background-image: url('${encodeURI(getMediaUrl(fullCoverPath))}');`;
-    } else coverStyle = `background: ${sound.color};`;
+    } else coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
     
     const titleKey = `sound_${sound.filename.replace(/\.[^/.]+$/, "")}`;
     const translatedTitle = translations[titleKey] || sound.title;
@@ -1165,4 +1199,58 @@ function updateMiniModePanel() {
     `;
     miniActiveList.appendChild(item);
   });
+}
+
+function setupPlaylistEndedEvent(filename) {
+  if (!activeAudio[filename]) return;
+  activeAudio[filename].onended = () => {
+    if (!isPlaylistMode) return;
+    playNextInPlaylist(filename);
+  };
+}
+
+function playNextInPlaylist(currentFilename) {
+  // Seçili kategoriye ve arama filtresine göre sıradaki sesi bul
+  const filtered = sounds.filter(sound => {
+    let matchesCategory = false;
+    if (currentCategory === 'all') matchesCategory = true;
+    else if (currentCategory === 'fav') matchesCategory = favorites.includes(sound.filename);
+    else matchesCategory = sound.category === currentCategory;
+
+    const matchesSearch = sound.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          sound.filename.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  if (filtered.length <= 1) {
+    // Sadece 1 ses varsa loop gibi onu tekrar çal
+    removeActiveSound(currentFilename);
+    setTimeout(() => {
+      if (isPlaylistMode) toggleSound(currentFilename);
+    }, 500);
+    return;
+  }
+
+  const currentIndex = filtered.findIndex(s => s.filename === currentFilename);
+  let nextIndex = 0;
+  if (currentIndex !== -1) {
+    nextIndex = (currentIndex + 1) % filtered.length;
+  }
+
+  const nextSound = filtered[nextIndex];
+  if (!nextSound) return;
+
+  // Öncekini temizle
+  removeActiveSound(currentFilename);
+
+  // Yumuşak geçişli başlat
+  setTimeout(() => {
+    if (isPlaylistMode) {
+      toggleSound(nextSound.filename);
+      // Yerelleştirilmiş bildirim
+      const nextTitleKey = `sound_${nextSound.filename.replace(/\.[^/.]+$/, "")}`;
+      const nextTitle = translations[nextTitleKey] || nextSound.title;
+      showToast(`${translations['playlist_mode'] || 'Sırayla Çal'}: ${nextTitle} 🎵`, 'info');
+    }
+  }, 600);
 }
