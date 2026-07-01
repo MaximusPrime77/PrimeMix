@@ -1183,19 +1183,28 @@ function updateMiniModePanel() {
     const titleKey = `sound_${sound.filename.replace(/\.[^/.]+$/, "")}`;
     const translatedTitle = translations[titleKey] || sound.title;
 
+    let coverStyle = '';
+    if (sound.cover) {
+      const fullCoverPath = `${sound.filePath.replace(sound.filename, '')}${sound.cover}`;
+      coverStyle = `background-image: url('${encodeURI(getMediaUrl(fullCoverPath))}');`;
+    } else {
+      coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
+    }
+
     const item = document.createElement('div');
-    item.className = `active-sound-item ${isPaused ? 'paused' : ''}`;
-    item.style.padding = '6px 10px';
+    item.className = `mini-sound-card ${isPaused ? 'paused' : ''}`;
     item.innerHTML = `
-      <span class="active-sound-name" style="flex:1; font-size:11px; font-weight:600;" title="${translatedTitle}">${translatedTitle}</span>
-      <div style="display:flex; align-items:center; gap:4px;">
-        <button class="btn-active-sound-action play-pause" onclick="toggleSound('${filename}')" title="Çal/Durdur">
-          ${isPaused ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>` : `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`}
-        </button>
-        <button class="btn-active-sound-action remove" onclick="removeActiveSound('${filename}')" title="Kaldır">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+      <div class="mini-sound-cover" style="${coverStyle}">
+        <div class="mini-sound-overlay">
+          <button class="mini-sound-btn play-pause" onclick="toggleSound('${filename}')" title="${isPaused ? (translations['play_all'] || 'Çal') : (translations['stop_all'] || 'Durdur')}">
+            ${isPaused ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>` : `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`}
+          </button>
+          <button class="mini-sound-btn remove" onclick="removeActiveSound('${filename}')" title="${translations['delete'] || 'Kaldır'}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
       </div>
+      <span class="mini-sound-name" title="${translatedTitle}">${translatedTitle}</span>
     `;
     miniActiveList.appendChild(item);
   });

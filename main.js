@@ -482,7 +482,7 @@ ipcMain.handle('toggle-mini-mode', async () => {
   if (isMiniMode) {
     normalBounds = mainWindow.getBounds();
     mainWindow.setAlwaysOnTop(true, 'floating');
-    mainWindow.setBounds({ width: 340, height: 240 });
+    mainWindow.setBounds({ width: 340, height: 270 });
     mainWindow.setResizable(false);
   } else {
     mainWindow.setAlwaysOnTop(false);
