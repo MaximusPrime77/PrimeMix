@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
+    "check": "node scripts/check.js",
     "build": "electron-builder --windows"
   },
   "keywords": [
@@ -16,15 +17,28 @@
     "focus",
     "sleep"
   ],
-  "author": "Maximus Decimus Meridius",
+  "author": {
+    "name": "Maximus Prime",
+    "email": "b.maximus.prime@gmail.com",
+    "url": "https://github.com/MaximusPrime77"
+  },
+  "homepage": "https://github.com/MaximusPrime77/PrimeMix#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaximusPrime77/PrimeMix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MaximusPrime77/PrimeMix/issues"
+  },
   "license": "MIT",
   "devDependencies": {
-    "electron": "^33.4.11",
-    "electron-builder": "^24.13.3"
+    "electron": "^43.1.1",
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.primemix.app",
     "productName": "PrimeMix",
+    "copyright": "Copyright © 2026 Maximus Prime Software",
     "directories": {
       "output": "dist"
     },
@@ -39,17 +53,9 @@
       "main.js",
       "preload.js",
       "renderer/**/*",
+      "assets/**/*",
       "tray_icon.png",
       "app_icon.png"
-    ],
-    "extraFiles": [
-      {
-        "from": "../PrimeMixSound",
-        "to": "PrimeMix_Data",
-        "filter": [
-          "**/*"
-        ]
-      }
     ],
     "asar": true
   }

@@ -3,11 +3,42 @@
 // State Management
 let sounds = [];
 const activeAudio = {}; // filename -> Audio object
-let favorites = JSON.parse(localStorage.getItem('primemix_favorites') || '[]');
+function readStoredArray(primaryKey, legacyKey = null) {
+  try {
+    const raw = localStorage.getItem(primaryKey) || (legacyKey ? localStorage.getItem(legacyKey) : null) || '[]';
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error(`Stored data could not be parsed: ${primaryKey}`, error);
+    return [];
+  }
+}
+
+function readStoredMixes() {
+  return readStoredArray('primemix_mixes', 'serenemix_mixes').flatMap((mix, index) => {
+    if (!mix || typeof mix !== 'object' || !Array.isArray(mix.sounds)) return [];
+    const name = typeof mix.name === 'string' ? mix.name.trim().slice(0, 80) : '';
+    if (!name) return [];
+    const mixSounds = mix.sounds.slice(0, 3).flatMap(sound => {
+      if (!sound || typeof sound.filename !== 'string') return [];
+      const volume = Number(sound.volume);
+      if (!Number.isFinite(volume)) return [];
+      return [{ filename: sound.filename, volume: Math.min(1, Math.max(0, volume)) }];
+    });
+    return [{
+      id: typeof mix.id === 'string' ? mix.id : `mix_recovered_${index}`,
+      name,
+      sounds: mixSounds
+    }];
+  });
+}
+
+let favorites = readStoredArray('primemix_favorites');
 let currentCategory = 'all';
 let searchQuery = '';
 let isGlobalPlaying = false;
 let isPlaylistMode = false;
+let playlistSequence = 0;
 
 // Sleep Timer State
 let sleepTimer = null;
@@ -103,13 +134,22 @@ function showToast(message, type = 'info') {
   if (!container) return;
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${message}</span>`;
+  const text = document.createElement('span');
+  text.textContent = String(message);
+  toast.appendChild(text);
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(10px)';
     setTimeout(() => toast.remove(), 300);
   }, 3200);
+}
+
+function formatMessage(template, values) {
+  return Object.entries(values).reduce(
+    (message, [key, value]) => message.replaceAll(`{${key}}`, String(value)),
+    template
+  );
 }
 
 function showConfirm(message, onConfirm) {
@@ -146,6 +186,17 @@ function getMediaUrl(filePath) {
 
 function getActivePlayingCount() {
   return Object.values(activeAudio).filter(audio => !audio.paused).length;
+}
+
+function renderGridMessage(message, className = '') {
+  soundsGrid.replaceChildren();
+  const state = document.createElement('div');
+  state.className = 'loading-state';
+  const text = document.createElement('p');
+  if (className) text.className = className;
+  text.textContent = String(message);
+  state.appendChild(text);
+  soundsGrid.appendChild(state);
 }
 
 // Dynamic Ambient Atmosphere Background Adjuster
@@ -261,15 +312,23 @@ async function loadSettings() {
 
 async function loadSounds(silent = false) {
   if (!silent) {
-    soundsGrid.innerHTML = `
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>${translations['loading_sounds'] || 'Sesler yükleniyor...'}</p>
-      </div>
-    `;
+    soundsGrid.replaceChildren();
+    const state = document.createElement('div');
+    state.className = 'loading-state';
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    const text = document.createElement('p');
+    text.textContent = translations['loading_sounds'] || 'Sesler yükleniyor...';
+    state.append(spinner, text);
+    soundsGrid.appendChild(state);
   }
 
-  const response = await window.api.getSounds();
+  let response;
+  try {
+    response = await window.api.getSounds();
+  } catch (error) {
+    response = { success: false, error: error.message };
+  }
   if (response.success) {
     Object.keys(activeAudio).forEach(filename => {
       const stillExists = response.sounds.some(s => s.filename === filename);
@@ -284,11 +343,7 @@ async function loadSounds(silent = false) {
     updateGlobalPlayButtonState();
   } else {
     if (!silent) {
-      soundsGrid.innerHTML = `
-        <div class="loading-state">
-          <p class="error-text">${translations['load_error'] || 'Sesler yüklenirken bir hata oluştu:'} ${response.error}</p>
-        </div>
-      `;
+      renderGridMessage(`${translations['load_error'] || 'Sesler yüklenirken bir hata oluştu:'} ${response.error}`, 'error-text');
     }
   }
 }
@@ -307,11 +362,7 @@ function renderSoundsGrid() {
   });
 
   if (filtered.length === 0) {
-    soundsGrid.innerHTML = `
-      <div class="loading-state">
-        <p>${translations['no_sounds_found'] || 'Klasörünüz boş veya aramanızla eşleşen ses bulunamadı.'}</p>
-      </div>
-    `;
+    renderGridMessage(translations['no_sounds_found'] || 'Klasörünüz boş veya aramanızla eşleşen ses bulunamadı.');
     return;
   }
 
@@ -325,13 +376,10 @@ function renderSoundsGrid() {
     card.className = `sound-card ${isActive ? 'active' : ''} ${isPaused ? 'paused' : ''}`;
     card.dataset.filename = sound.filename;
 
-    let coverStyle = '';
+    let coverUrl = 'app_icon.png';
     if (sound.cover) {
       const fullCoverPath = `${sound.filePath.replace(sound.filename, '')}${sound.cover}`;
-      const mediaUrl = getMediaUrl(fullCoverPath);
-      coverStyle = `background-image: url('${encodeURI(mediaUrl)}');`;
-    } else {
-      coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
+      coverUrl = getMediaUrl(fullCoverPath);
     }
 
     const transKey = catKeyMap[sound.category] || 'cat_other';
@@ -345,19 +393,19 @@ function renderSoundsGrid() {
         <div class="eq-bar"></div>
         <div class="eq-bar"></div>
       </div>
-      <div class="cover-container" style="${coverStyle}">
+      <div class="cover-container">
         <div class="cover-top-left-actions">
-          <button class="btn-cover-action btn-card-edit" onclick="openEditModal('${sound.filename}')" title="${translations['customize_sound'] || 'Düzenle'}">
+          <button class="btn-cover-action btn-card-edit" type="button" title="${translations['customize_sound'] || 'Düzenle'}">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           </button>
-          <button class="btn-cover-action btn-card-delete" onclick="confirmDeleteSound('${sound.filename}')" title="${translations['delete'] || 'Sil'}">
+          <button class="btn-cover-action btn-card-delete" type="button" title="${translations['delete'] || 'Sil'}">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
           </button>
         </div>
-        <button class="btn-cover-action btn-card-fav ${isFav ? 'active' : ''}" onclick="toggleFavorite('${sound.filename}', event)" title="Favorilere Ekle/Çıkar">
+        <button class="btn-cover-action btn-card-fav ${isFav ? 'active' : ''}" type="button" title="Favorilere Ekle/Çıkar">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <div class="cover-overlay" onclick="toggleSound('${sound.filename}')">
+        <div class="cover-overlay">
           <button class="play-icon-btn">
             ${isActive && !isPaused ? 
               `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>` : 
@@ -368,15 +416,29 @@ function renderSoundsGrid() {
       </div>
       <div class="sound-info-container">
         <div class="sound-meta">
-          <span class="sound-name" title="${translatedTitle}">${translatedTitle}</span>
-          <span class="sound-category">${translatedCategory}</span>
+          <span class="sound-name"></span>
+          <span class="sound-category"></span>
         </div>
       </div>
       <div class="volume-container">
         <svg class="volume-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="${sound.volume}" oninput="changeSoundVolume('${sound.filename}', this.value)">
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="${sound.volume}">
       </div>
     `;
+
+    const cover = card.querySelector('.cover-container');
+    cover.style.backgroundImage = `url("${coverUrl.replace(/"/g, '%22')}")`;
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+    const name = card.querySelector('.sound-name');
+    name.textContent = translatedTitle;
+    name.title = translatedTitle;
+    card.querySelector('.sound-category').textContent = translatedCategory;
+    card.querySelector('.btn-card-edit').addEventListener('click', () => openEditModal(sound.filename));
+    card.querySelector('.btn-card-delete').addEventListener('click', () => confirmDeleteSound(sound.filename));
+    card.querySelector('.btn-card-fav').addEventListener('click', (event) => toggleFavorite(sound.filename, event));
+    card.querySelector('.cover-overlay').addEventListener('click', () => toggleSound(sound.filename));
+    card.querySelector('.volume-slider').addEventListener('input', (event) => changeSoundVolume(sound.filename, event.target.value));
 
     soundsGrid.appendChild(card);
   });
@@ -388,10 +450,10 @@ function toggleFavorite(filename, event) {
   const index = favorites.indexOf(filename);
   if (index > -1) {
     favorites.splice(index, 1);
-    showToast('Favorilerden çıkarıldı.', 'info');
+    showToast(translations['favorite_removed'] || 'Favorilerden çıkarıldı.', 'info');
   } else {
     favorites.push(filename);
-    showToast('Favorilere eklendi! ⭐', 'info');
+    showToast(translations['favorite_added'] || 'Favorilere eklendi! ⭐', 'info');
   }
   localStorage.setItem('primemix_favorites', JSON.stringify(favorites));
   renderSoundsGrid();
@@ -598,25 +660,27 @@ function pauseAllActiveSounds() {
 
 function clearAllActiveSounds() {
   const filenames = Object.keys(activeAudio);
-  if (filenames.length === 0) return;
+  if (filenames.length === 0) return Promise.resolve();
 
   // Race condition önlemi: önce tüm referansları al, activeAudio'yu temizle
   const audioSnapshot = {};
   filenames.forEach(f => { audioSnapshot[f] = activeAudio[f]; delete activeAudio[f]; });
 
   let remaining = filenames.length;
-  filenames.forEach(filename => {
-    const audio = audioSnapshot[filename];
-    fadeOutAudio(audio, () => {
-      audio.pause();
-      remaining--;
-      // Sadece son ses bittiğinde UI'ı bir kez güncelle
-      if (remaining === 0) {
-        updateGlobalPlayButtonState();
-        renderSoundsGrid();
-        updateActiveSoundsPanel();
-        updateAmbientAtmosphere();
-      }
+  return new Promise(resolve => {
+    filenames.forEach(filename => {
+      const audio = audioSnapshot[filename];
+      fadeOutAudio(audio, () => {
+        audio.pause();
+        remaining--;
+        if (remaining === 0) {
+          updateGlobalPlayButtonState();
+          renderSoundsGrid();
+          updateActiveSoundsPanel();
+          updateAmbientAtmosphere();
+          resolve();
+        }
+      });
     });
   });
 }
@@ -672,10 +736,10 @@ function togglePomodoroTimer() {
         isPomoRunning = false; // switchPomodoroMode bunu görecek
 
         if (pomoMode === 'work') {
-          showToast('🔔 Çalışma seansı bitti! Mola vakti.', 'info');
+          showToast(translations['pomo_work_finished'] || '🔔 Çalışma seansı bitti! Mola vakti.', 'info');
           switchPomodoroMode('break');
         } else {
-          showToast('🔔 Mola bitti! Odaklanma zamanı.', 'info');
+          showToast(translations['pomo_break_finished'] || '🔔 Mola bitti! Odaklanma zamanı.', 'info');
           switchPomodoroMode('work');
         }
         // Düzgün döngü için buton ikonunu doğru göster
@@ -751,9 +815,9 @@ function initEventListeners() {
     const result = await window.api.addSound();
     if (result.success) {
       await loadSounds();
-      showToast('Yeni ses başarıyla eklendi.', 'info');
+      showToast(translations['sound_added'] || 'Yeni ses başarıyla eklendi.', 'info');
     } else if (result.error) {
-      showToast(`Ses eklenirken hata oluştu: ${result.error}`, 'error');
+      showToast(`${translations['sound_add_error'] || 'Ses eklenirken hata oluştu:'} ${result.error}`, 'error');
     }
   });
 
@@ -808,16 +872,16 @@ function initEventListeners() {
 
   // Import / Export Mixes Triggers
   btnExportMixes.addEventListener('click', async () => {
-    const mixes = JSON.parse(localStorage.getItem('primemix_mixes') || localStorage.getItem('serenemix_mixes') || '[]');
+    const mixes = readStoredMixes();
     if (mixes.length === 0) {
-      showToast('Dışa aktarılacak kayıtlı karışım bulunamadı.', 'warning');
+      showToast(translations['mix_export_empty'] || 'Dışa aktarılacak kayıtlı karışım bulunamadı.', 'warning');
       return;
     }
     const result = await window.api.exportMixes(mixes);
     if (result.success) {
-      showToast('Karışımlar başarıyla dosyaya aktarıldı. 💾', 'info');
+      showToast(translations['mix_export_success'] || 'Karışımlar başarıyla dosyaya aktarıldı. 💾', 'info');
     } else if (result.error) {
-      showToast(`Dışa aktarma hatası: ${result.error}`, 'error');
+      showToast(`${translations['mix_export_error'] || 'Dışa aktarma hatası:'} ${result.error}`, 'error');
     }
   });
 
@@ -826,9 +890,9 @@ function initEventListeners() {
     if (result.success && Array.isArray(result.data)) {
       localStorage.setItem('primemix_mixes', JSON.stringify(result.data));
       loadSavedMixes();
-      showToast('Karışımlar dosyadan yüklendi! 📥', 'info');
+      showToast(translations['mix_import_success'] || 'Karışımlar dosyadan yüklendi! 📥', 'info');
     } else if (result.error) {
-      showToast(`İçe aktarma hatası: ${result.error}`, 'error');
+      showToast(`${translations['mix_import_error'] || 'İçe aktarma hatası:'} ${result.error}`, 'error');
     }
   });
 
@@ -842,6 +906,7 @@ function initEventListeners() {
   if (chkPlaylistMode) {
     chkPlaylistMode.addEventListener('change', (e) => {
       isPlaylistMode = e.target.checked;
+      playlistSequence++;
       if (isPlaylistMode) {
         // Çalan seslerden sadece 1 tanesini bırakıp diğerlerini temizle
         const activeKeys = Object.keys(activeAudio);
@@ -870,7 +935,7 @@ function initEventListeners() {
       try {
         await window.api.setStartupSettings(e.target.checked);
       } catch (err) {
-        showToast('Başlangıç ayarı değiştirilemedi.', 'error');
+        showToast(translations['startup_error'] || 'Başlangıç ayarı değiştirilemedi.', 'error');
         e.target.checked = !e.target.checked;
       }
     });
@@ -889,7 +954,7 @@ function initEventListeners() {
   document.getElementById('btn-close-about-modal').addEventListener('click', () => aboutModal.classList.add('hidden'));
   // Overlay tıklamasıyla tüm modalları kapat
   aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) aboutModal.classList.add('hidden'); });
-  document.getElementById('link-github').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://github.com/MaximusPrime77/PrimeMix'); });
+  document.getElementById('link-github').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://github.com/MaximusPrime77'); });
   document.getElementById('link-email').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('mailto:b.maximus.prime@gmail.com'); });
 
   window.api.onStopAllSounds(() => pauseAllActiveSounds());
@@ -918,7 +983,7 @@ function startSleepTimer(minutes) {
       // Kullanıcı ertesi gün açınca sesleri sıfırdan kurmak zorunda kalmasın
       pauseAllActiveSounds();
       cancelSleepTimer();
-      showToast('🌙 Uyku zamanlayıcısı sona erdi. İyi geceler!', 'info');
+      showToast(translations['sleep_finished'] || '🌙 Uyku zamanlayıcısı sona erdi. İyi geceler!', 'info');
     } else updateTimerDisplay();
   }, 1000);
 }
@@ -942,7 +1007,7 @@ function cancelSleepTimer() {
 
 function loadSavedMixes() {
   mixesList.innerHTML = '';
-  const mixes = JSON.parse(localStorage.getItem('primemix_mixes') || localStorage.getItem('serenemix_mixes') || '[]');
+  const mixes = readStoredMixes();
   if (mixes.length === 0) {
     mixesList.innerHTML = `<p class="empty-text">${translations['no_saved_mixes'] || 'Henüz kayıtlı karışımınız yok.'}</p>`;
     return;
@@ -960,14 +1025,25 @@ function loadSavedMixes() {
       return s.filename;
     });
     item.innerHTML = `
-      <div class="mix-info" onclick="applyMix('${mix.id}')">
-        <span class="mix-name">${mix.name}</span>
-        <span class="mix-details">${soundTitles.join(' + ')}</span>
+      <div class="mix-info" role="button" tabindex="0">
+        <span class="mix-name"></span>
+        <span class="mix-details"></span>
       </div>
-      <button class="btn-icon" onclick="deleteMix('${mix.id}', event)" title="Sil">
+      <button class="btn-icon btn-delete-mix" type="button" title="${translations['delete'] || 'Sil'}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>
       </button>
     `;
+    item.querySelector('.mix-name').textContent = String(mix.name || '');
+    item.querySelector('.mix-details').textContent = soundTitles.join(' + ');
+    const mixInfo = item.querySelector('.mix-info');
+    mixInfo.addEventListener('click', () => applyMix(mix.id));
+    mixInfo.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        applyMix(mix.id);
+      }
+    });
+    item.querySelector('.btn-delete-mix').addEventListener('click', (event) => deleteMix(mix.id, event));
     mixesList.appendChild(item);
   });
 }
@@ -975,25 +1051,25 @@ function loadSavedMixes() {
 function saveMix(name) {
   const currentMixSounds = [];
   Object.keys(activeAudio).forEach(filename => {
-    currentMixSounds.push({ filename: filename, volume: activeAudio[filename].volume });
+    const sound = sounds.find(item => item.filename === filename);
+    currentMixSounds.push({ filename, volume: sound ? sound.volume : activeAudio[filename].volume });
   });
 
   const newMix = { id: 'mix_' + Date.now(), name: name, sounds: currentMixSounds };
-  const mixes = JSON.parse(localStorage.getItem('primemix_mixes') || localStorage.getItem('serenemix_mixes') || '[]');
+  const mixes = readStoredMixes();
   mixes.push(newMix);
   localStorage.setItem('primemix_mixes', JSON.stringify(mixes));
   loadSavedMixes();
-  showToast('Karışım başarıyla kaydedildi.', 'info');
+  showToast(translations['mix_saved'] || 'Karışım başarıyla kaydedildi.', 'info');
 }
 
 async function applyMix(id) {
-  const mixes = JSON.parse(localStorage.getItem('primemix_mixes') || localStorage.getItem('serenemix_mixes') || '[]');
+  const mixes = readStoredMixes();
   const mix = mixes.find(m => m.id === id);
   if (!mix) return;
 
   // Önce mevcut sesleri temizle
-  clearAllActiveSounds();
-  await new Promise(resolve => setTimeout(resolve, 420));
+  await clearAllActiveSounds();
 
   // Yeni sesleri başlat, eksik olanları kaydet
   const limitSounds = mix.sounds.slice(0, 3);
@@ -1012,17 +1088,26 @@ async function applyMix(id) {
   }
 
   if (loadedCount === 0) {
-    showToast(`"${mix.name}" karışımındaki sesler bulunamadı. Dosyalar silinmiş olabilir.`, 'error');
+    showToast(formatMessage(
+      translations['mix_missing_all'] || '"{name}" karışımındaki sesler bulunamadı. Dosyalar silinmiş olabilir.',
+      { name: mix.name }
+    ), 'error');
   } else if (missingCount > 0) {
-    showToast(`"${mix.name}" yüklendi (${missingCount} ses eksik — dosya bulunamadı).`, 'warning');
+    showToast(formatMessage(
+      translations['mix_missing_some'] || '"{name}" yüklendi ({count} ses eksik — dosya bulunamadı).',
+      { name: mix.name, count: missingCount }
+    ), 'warning');
   } else {
-    showToast(`"${mix.name}" karışımı yüklendi. 🎧`, 'info');
+    showToast(formatMessage(
+      translations['mix_loaded'] || '"{name}" karışımı yüklendi. 🎧',
+      { name: mix.name }
+    ), 'info');
   }
 }
 
 function deleteMix(id, event) {
   event.stopPropagation();
-  let mixes = JSON.parse(localStorage.getItem('primemix_mixes') || localStorage.getItem('serenemix_mixes') || '[]');
+  let mixes = readStoredMixes();
   mixes = mixes.filter(m => m.id !== id);
   localStorage.setItem('primemix_mixes', JSON.stringify(mixes));
   loadSavedMixes();
@@ -1061,8 +1146,8 @@ async function uploadCoverImage() {
     selectedSoundForEdit.cover = result.coverPath;
     updateCoverPreview(selectedSoundForEdit);
     renderSoundsGrid();
-    showToast('Kapak görseli güncellendi.', 'info');
-  } else if (result.error) showToast(`Resim yüklenirken hata oluştu: ${result.error}`, 'error');
+    showToast(translations['cover_updated'] || 'Kapak görseli güncellendi.', 'info');
+  } else if (result.error) showToast(`${translations['cover_error'] || 'Resim yüklenirken hata oluştu:'} ${result.error}`, 'error');
 }
 
 async function saveEditDetails() {
@@ -1078,8 +1163,8 @@ async function saveEditDetails() {
     if (sound) { sound.title = title; sound.category = category; }
     editModal.classList.add('hidden');
     renderSoundsGrid();
-    showToast('Ses detayları kaydedildi.', 'info');
-  } else showToast(`Kaydedilemedi: ${response.error}`, 'error');
+    showToast(translations['details_saved'] || 'Ses detayları kaydedildi.', 'info');
+  } else showToast(`${translations['save_error'] || 'Kaydedilemedi:'} ${response.error}`, 'error');
 }
 
 async function confirmDeleteSound(filename) {
@@ -1096,23 +1181,27 @@ async function confirmDeleteSound(filename) {
     const response = await window.api.deleteSound(filename);
     if (response.success) {
       await loadSounds(true);
-      showToast('Ses dosyası silindi.', 'info');
-    } else showToast(`Silme başarısız: ${response.error}`, 'error');
+      showToast(translations['sound_deleted'] || 'Ses dosyası silindi.', 'info');
+    } else showToast(`${translations['delete_error'] || 'Silme başarısız:'} ${response.error}`, 'error');
   });
 }
 
 function removeActiveSound(filename) {
   if (activeAudio[filename]) {
     const audio = activeAudio[filename];
-    fadeOutAudio(audio, () => {
-      audio.pause();
-      delete activeAudio[filename];
-      updateGlobalPlayButtonState();
-      renderSoundsGrid();
-      updateActiveSoundsPanel();
-      updateAmbientAtmosphere();
+    return new Promise(resolve => {
+      fadeOutAudio(audio, () => {
+        audio.pause();
+        if (activeAudio[filename] === audio) delete activeAudio[filename];
+        updateGlobalPlayButtonState();
+        renderSoundsGrid();
+        updateActiveSoundsPanel();
+        updateAmbientAtmosphere();
+        resolve();
+      });
     });
   }
+  return Promise.resolve();
 }
 
 function updateActiveSoundsPanel() {
@@ -1135,32 +1224,42 @@ function updateActiveSoundsPanel() {
     item.className = `active-sound-item ${isPaused ? 'paused' : ''}`;
     item.dataset.filename = filename;
     
-    let coverStyle = '';
+    let coverUrl = 'app_icon.png';
     if (sound.cover) {
       const fullCoverPath = `${sound.filePath.replace(sound.filename, '')}${sound.cover}`;
-      coverStyle = `background-image: url('${encodeURI(getMediaUrl(fullCoverPath))}');`;
-    } else coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
+      coverUrl = getMediaUrl(fullCoverPath);
+    }
     
     const titleKey = `sound_${sound.filename.replace(/\.[^/.]+$/, "")}`;
     const translatedTitle = translations[titleKey] || sound.title;
     
     item.innerHTML = `
-      <div class="active-sound-cover" style="${coverStyle}"></div>
+      <div class="active-sound-cover"></div>
       <div class="active-sound-info">
-        <span class="active-sound-name" title="${translatedTitle}">${translatedTitle}</span>
+        <span class="active-sound-name"></span>
         <div class="active-sound-controls">
           <div class="active-sound-slider-container">
-            <input type="range" class="active-sound-slider" min="0" max="1" step="0.01" value="${sound.volume}" oninput="changeSoundVolume('${filename}', this.value)">
+            <input type="range" class="active-sound-slider" min="0" max="1" step="0.01" value="${sound.volume}">
           </div>
-          <button class="btn-active-sound-action play-pause" onclick="toggleSound('${filename}')" title="${isPaused ? (translations['play_all'] || 'Çal') : (translations['stop_all'] || 'Durdur')}">
+          <button class="btn-active-sound-action play-pause" type="button" title="${isPaused ? (translations['play_all'] || 'Çal') : (translations['stop_all'] || 'Durdur')}">
             ${isPaused ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>` : `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`}
           </button>
-          <button class="btn-active-sound-action remove" onclick="removeActiveSound('${filename}')" title="${translations['delete'] || 'Kaldır'}">
+          <button class="btn-active-sound-action remove" type="button" title="${translations['delete'] || 'Kaldır'}">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
       </div>
     `;
+    const cover = item.querySelector('.active-sound-cover');
+    cover.style.backgroundImage = `url("${coverUrl.replace(/"/g, '%22')}")`;
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+    const name = item.querySelector('.active-sound-name');
+    name.textContent = translatedTitle;
+    name.title = translatedTitle;
+    item.querySelector('.active-sound-slider').addEventListener('input', (event) => changeSoundVolume(filename, event.target.value));
+    item.querySelector('.play-pause').addEventListener('click', () => toggleSound(filename));
+    item.querySelector('.remove').addEventListener('click', () => removeActiveSound(filename));
     activeSoundsList.appendChild(item);
   });
 
@@ -1172,7 +1271,10 @@ function updateMiniModePanel() {
   miniActiveList.innerHTML = '';
   const activeKeys = Object.keys(activeAudio);
   if (activeKeys.length === 0) {
-    miniActiveList.innerHTML = `<p class="empty-text">${translations['no_sounds_found'] || 'Aktif ses yok.'}</p>`;
+    const empty = document.createElement('p');
+    empty.className = 'empty-text';
+    empty.textContent = translations['active_sounds_empty'] || 'Aktif ses yok.';
+    miniActiveList.appendChild(empty);
     return;
   }
   activeKeys.forEach(filename => {
@@ -1183,29 +1285,36 @@ function updateMiniModePanel() {
     const titleKey = `sound_${sound.filename.replace(/\.[^/.]+$/, "")}`;
     const translatedTitle = translations[titleKey] || sound.title;
 
-    let coverStyle = '';
+    let coverUrl = 'app_icon.png';
     if (sound.cover) {
       const fullCoverPath = `${sound.filePath.replace(sound.filename, '')}${sound.cover}`;
-      coverStyle = `background-image: url('${encodeURI(getMediaUrl(fullCoverPath))}');`;
-    } else {
-      coverStyle = `background-image: url('app_icon.png'); background-size: cover; background-position: center;`;
+      coverUrl = getMediaUrl(fullCoverPath);
     }
 
     const item = document.createElement('div');
     item.className = `mini-sound-card ${isPaused ? 'paused' : ''}`;
     item.innerHTML = `
-      <div class="mini-sound-cover" style="${coverStyle}">
+      <div class="mini-sound-cover">
         <div class="mini-sound-overlay">
-          <button class="mini-sound-btn play-pause" onclick="toggleSound('${filename}')" title="${isPaused ? (translations['play_all'] || 'Çal') : (translations['stop_all'] || 'Durdur')}">
+          <button class="mini-sound-btn play-pause" type="button" title="${isPaused ? (translations['play_all'] || 'Çal') : (translations['stop_all'] || 'Durdur')}">
             ${isPaused ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>` : `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`}
           </button>
-          <button class="mini-sound-btn remove" onclick="removeActiveSound('${filename}')" title="${translations['delete'] || 'Kaldır'}">
+          <button class="mini-sound-btn remove" type="button" title="${translations['delete'] || 'Kaldır'}">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
           </button>
         </div>
       </div>
-      <span class="mini-sound-name" title="${translatedTitle}">${translatedTitle}</span>
+      <span class="mini-sound-name"></span>
     `;
+    const cover = item.querySelector('.mini-sound-cover');
+    cover.style.backgroundImage = `url("${coverUrl.replace(/"/g, '%22')}")`;
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+    const name = item.querySelector('.mini-sound-name');
+    name.textContent = translatedTitle;
+    name.title = translatedTitle;
+    item.querySelector('.play-pause').addEventListener('click', () => toggleSound(filename));
+    item.querySelector('.remove').addEventListener('click', () => removeActiveSound(filename));
     miniActiveList.appendChild(item);
   });
 }
@@ -1218,7 +1327,8 @@ function setupPlaylistEndedEvent(filename) {
   };
 }
 
-function playNextInPlaylist(currentFilename) {
+async function playNextInPlaylist(currentFilename) {
+  const sequence = playlistSequence;
   // Seçili kategoriye ve arama filtresine göre sıradaki sesi bul
   const filtered = sounds.filter(sound => {
     let matchesCategory = false;
@@ -1233,10 +1343,8 @@ function playNextInPlaylist(currentFilename) {
 
   if (filtered.length <= 1) {
     // Sadece 1 ses varsa loop gibi onu tekrar çal
-    removeActiveSound(currentFilename);
-    setTimeout(() => {
-      if (isPlaylistMode) toggleSound(currentFilename);
-    }, 500);
+    await removeActiveSound(currentFilename);
+    if (isPlaylistMode && sequence === playlistSequence) await toggleSound(currentFilename);
     return;
   }
 
@@ -1250,16 +1358,10 @@ function playNextInPlaylist(currentFilename) {
   if (!nextSound) return;
 
   // Öncekini temizle
-  removeActiveSound(currentFilename);
-
-  // Yumuşak geçişli başlat
-  setTimeout(() => {
-    if (isPlaylistMode) {
-      toggleSound(nextSound.filename);
-      // Yerelleştirilmiş bildirim
-      const nextTitleKey = `sound_${nextSound.filename.replace(/\.[^/.]+$/, "")}`;
-      const nextTitle = translations[nextTitleKey] || nextSound.title;
-      showToast(`${translations['playlist_mode'] || 'Sırayla Çal'}: ${nextTitle} 🎵`, 'info');
-    }
-  }, 600);
+  await removeActiveSound(currentFilename);
+  if (!isPlaylistMode || sequence !== playlistSequence) return;
+  await toggleSound(nextSound.filename);
+  const nextTitleKey = `sound_${nextSound.filename.replace(/\.[^/.]+$/, "")}`;
+  const nextTitle = translations[nextTitleKey] || nextSound.title;
+  showToast(`${translations['playlist_mode'] || 'Sırayla Çal'}: ${nextTitle} 🎵`, 'info');
 }

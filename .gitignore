@@ -28,5 +28,6 @@ yarn-error.log*
 # Large media folders
 PrimeMixSound/
 PrimeMix_Data/
+UnverifiedAudioLibrary/
 dist/
 out/

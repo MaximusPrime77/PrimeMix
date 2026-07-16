@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' media: data:; media-src media:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>PrimeMix</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Google Fonts: Outfit (Asynchronous Load for Startup Performance) -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"></noscript>
 </head>
 <body>
   <!-- Premium Custom Titlebar -->
@@ -317,15 +315,15 @@
       </div>
       <div class="modal-body about-body">
         <div class="developer-profile">
-          <div class="avatar-placeholder">M</div>
-          <h3>Maximus Decimus Meridius</h3>
-          <p class="dev-role">Developer & Designer</p>
+          <img class="developer-logo" src="../assets/maximus-prime-software.png" alt="Maximus Prime Software logo">
+          <h3>Maximus Prime</h3>
+          <p class="dev-role">Maximus Prime Software · Developer & Designer</p>
         </div>
         <hr class="divider">
         <div class="about-info-list">
           <div class="info-item">
             <span class="info-label">GitHub</span>
-            <a href="#" id="link-github" class="info-value">github.com/MaximusPrime77/PrimeMix</a>
+            <a href="#" id="link-github" class="info-value">github.com/MaximusPrime77</a>
           </div>
           <div class="info-item">
             <span class="info-label">E-Mail</span>
