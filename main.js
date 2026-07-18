@@ -547,8 +547,14 @@ ipcMain.on('open-external', (event, url) => {
   if (!isTrustedSender(event) || typeof url !== 'string') return;
   try {
     const parsed = new URL(url);
-    const allowedHttps = parsed.protocol === 'https:' && parsed.hostname === 'github.com';
-    const allowedEmail = parsed.protocol === 'mailto:' && parsed.pathname === 'b.maximus.prime@gmail.com';
+    const allowedHttps = parsed.protocol === 'https:' && (
+      parsed.hostname === 'github.com' ||
+      parsed.hostname === 'maximusprimesoftware.pages.dev'
+    );
+    const allowedEmail = parsed.protocol === 'mailto:' && (
+      parsed.pathname === 'b.maximus.prime@gmail.com' ||
+      parsed.pathname === 'maximusprimesoftware@gmail.com'
+    );
     if (allowedHttps || allowedEmail) shell.openExternal(url);
   } catch (error) {
     console.error('External URL rejected:', error);

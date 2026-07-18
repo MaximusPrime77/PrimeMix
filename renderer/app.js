@@ -954,8 +954,12 @@ function initEventListeners() {
   document.getElementById('btn-close-about-modal').addEventListener('click', () => aboutModal.classList.add('hidden'));
   // Overlay tıklamasıyla tüm modalları kapat
   aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) aboutModal.classList.add('hidden'); });
-  document.getElementById('link-github').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://github.com/MaximusPrime77'); });
+  document.getElementById('link-website')?.addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://maximusprimesoftware.pages.dev/'); });
+  document.getElementById('link-product')?.addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://maximusprimesoftware.pages.dev/projects/primemix/'); });
+  document.getElementById('link-studio-email')?.addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('mailto:maximusprimesoftware@gmail.com'); });
   document.getElementById('link-email').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('mailto:b.maximus.prime@gmail.com'); });
+  document.getElementById('link-github').addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://github.com/MaximusPrime'); });
+  document.getElementById('link-org')?.addEventListener('click', (e) => { e.preventDefault(); window.api.openExternal('https://github.com/MaximusPrimeSoftware'); });
 
   window.api.onStopAllSounds(() => pauseAllActiveSounds());
   window.api.onSoundsChanged(() => loadSounds(true));

@@ -20,15 +20,23 @@
   "author": {
     "name": "Maximus Prime",
     "email": "b.maximus.prime@gmail.com",
-    "url": "https://github.com/MaximusPrime77"
+    "url": "https://github.com/MaximusPrime"
   },
-  "homepage": "https://github.com/MaximusPrime77/PrimeMix#readme",
+  "contributors": [
+    {
+      "name": "Maximus Prime Software",
+      "email": "maximusprimesoftware@gmail.com",
+      "url": "https://maximusprimesoftware.pages.dev/"
+    }
+  ],
+  "homepage": "https://maximusprimesoftware.pages.dev/projects/primemix/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaximusPrime77/PrimeMix.git"
+    "url": "git+https://github.com/MaximusPrimeSoftware/PrimeMix.git"
   },
   "bugs": {
-    "url": "https://github.com/MaximusPrime77/PrimeMix/issues"
+    "url": "https://github.com/MaximusPrimeSoftware/PrimeMix/issues",
+    "email": "maximusprimesoftware@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
