@@ -68,7 +68,5 @@ found 0 vulnerabilities
 Developed by **Maximus Prime**
 
 - GitHub: [@MaximusPrime](https://github.com/MaximusPrime)
-- Organization: [@MaximusPrimeSoftware](https://github.com/MaximusPrimeSoftware)
 - Website: [maximusprimesoftware.pages.dev](https://maximusprimesoftware.pages.dev/)
-- Email: [b.maximus.prime@gmail.com](mailto:b.maximus.prime@gmail.com)
-- Studio email: [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com)
+- Email: [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com)

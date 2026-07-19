@@ -119,7 +119,7 @@ See [AUDIO_SOURCING_GUIDE.md](AUDIO_SOURCING_GUIDE.md) for the full acceptance p
 ### Setup
 
 ```powershell
-git clone https://github.com/MaximusPrimeSoftware/PrimeMix.git
+git clone https://github.com/MaximusPrime/PrimeMix.git
 cd PrimeMix
 npm install
 npm start
@@ -182,5 +182,5 @@ Audio files imported by users remain subject to their respective licenses. The M
   <a href="https://maximusprimesoftware.pages.dev/projects/primemix/">Product page</a><br>
   <a href="mailto:maximusprimesoftware@gmail.com">maximusprimesoftware@gmail.com</a> ·
   <a href="https://github.com/MaximusPrime">@MaximusPrime</a> ·
-  <a href="https://github.com/MaximusPrimeSoftware/PrimeMix">Repository</a>
+  <a href="https://github.com/MaximusPrime/PrimeMix">Repository</a>
 </p>

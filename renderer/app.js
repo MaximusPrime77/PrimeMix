@@ -964,7 +964,7 @@ function initEventListeners() {
   });
   document.getElementById('link-source')?.addEventListener('click', (e) => {
     e.preventDefault();
-    window.api.openExternal('https://github.com/MaximusPrimeSoftware/PrimeMix');
+    window.api.openExternal('https://github.com/MaximusPrime/PrimeMix');
   });
 
   window.api.onStopAllSounds(() => pauseAllActiveSounds());
