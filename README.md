@@ -144,7 +144,7 @@ Build artifacts are written to `dist/`. This directory is intentionally excluded
 
 PrimeMix uses Electron security boundaries including context isolation, renderer sandboxing, a restrictive Content Security Policy, validated IPC senders, constrained local-media access, and path-containment checks for file operations.
 
-If you discover a security issue, contact [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com) or [b.maximus.prime@gmail.com](mailto:b.maximus.prime@gmail.com) instead of opening a public issue containing sensitive details.
+If you discover a security issue, contact [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com) instead of opening a public issue containing sensitive details.
 
 ## Project structure
 
@@ -178,10 +178,9 @@ Audio files imported by users remain subject to their respective licenses. The M
 <p align="center">
   <strong>Published by Maximus Prime Software</strong><br>
   Designed and developed by <strong>Maximus Prime</strong><br>
-  <a href="https://maximusprimesoftware.pages.dev/">Website</a> ·
+  <a href="https://maximusprimesoftware.pages.dev/">Official website</a> ·
   <a href="https://maximusprimesoftware.pages.dev/projects/primemix/">Product page</a><br>
   <a href="mailto:maximusprimesoftware@gmail.com">maximusprimesoftware@gmail.com</a> ·
-  <a href="mailto:b.maximus.prime@gmail.com">b.maximus.prime@gmail.com</a><br>
   <a href="https://github.com/MaximusPrime">@MaximusPrime</a> ·
-  <a href="https://github.com/MaximusPrimeSoftware">@MaximusPrimeSoftware</a>
+  <a href="https://github.com/MaximusPrimeSoftware/PrimeMix">Repository</a>
 </p>
