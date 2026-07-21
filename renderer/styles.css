@@ -1213,8 +1213,17 @@ body {
   font-size: 13px;
 }
 
-.info-label {
+.info-label,
+.info-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--text-secondary);
+}
+
+.info-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .info-value {

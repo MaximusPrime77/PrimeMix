@@ -256,6 +256,13 @@ async function loadLanguage(lang) {
       }
     });
 
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      if (translations[key]) {
+        el.setAttribute('title', translations[key]);
+      }
+    });
+
     const btnLangToggle = document.getElementById('btn-lang-toggle');
     if (btnLangToggle) btnLangToggle.textContent = lang.toUpperCase();
 
