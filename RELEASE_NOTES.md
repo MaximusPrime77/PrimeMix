@@ -1,72 +1,79 @@
-# PrimeMix 1.0.0
+# PrimeMix v1.0.0 Release Notes
 
-PrimeMix 1.0.0 is the first public-ready release of the local-first ambient sound mixer by Maximus Prime Software.
+> **PrimeMix v1.0.0** is the first official public release of the local-first, privacy-focused ambient sound mixer for Windows by Maximus Prime Software.
 
-## Highlights
+---
 
-- Play and mix up to three sounds at once.
-- Control track volume independently with smooth fades.
-- Use sequential playlist mode for focused listening.
-- Save, restore, import, and export personal mixes.
-- Mark sounds as favorites and filter the library.
-- Use integrated sleep and Pomodoro timers.
-- Switch to a compact always-on-top mini player.
-- Customize sound titles, categories, and cover artwork.
-- Switch instantly between English and Turkish.
-- Control playback from the Windows system tray and media keys.
+## 🚀 Highlights
 
-## Security and reliability
+- **Multi-Track Ambient Mixer:** Mix up to 3 ambient sounds simultaneously with individual volume sliders and smooth fade-in/fade-out transitions.
+- **Bring Your Own Audio (BYOA):** Seamlessly import your own local audio files (MP3, WAV, OGG, FLAC, M4A) with real-time sound folder synchronization.
+- **Focus & Sleep Timers:** Integrated 25/5 Pomodoro focus timer and customizable Sleep Timer (15 minutes to 2 hours) with automatic gradual fade-out.
+- **Compact Mini Player:** Always-on-top compact mini player mode for uninterrupted workflow.
+- **Preset Mix Import & Export:** Save custom sound combinations, export them as JSON presets, and restore them anytime.
+- **Windows System Tray & Media Controls:** Background tray minimization, system tray controls, and global media key integration.
+- **Bilingual Interface:** Instant switching between English and Turkish languages.
+- **100% Privacy & Local-First:** No accounts, no cloud dependency, no telemetry—everything stays on your device.
 
-- Upgraded to Electron 43.1.1 and electron-builder 26.15.3.
-- Added renderer sandboxing and context isolation.
-- Added a restrictive Content Security Policy.
-- Removed inline event handlers and unsafe user-data rendering.
-- Restricted local media access to the active sound directory.
-- Added IPC sender, filename, URL, and path validation.
-- Added atomic, queued metadata writes.
-- Added structured validation for imported mix files.
-- Added single-instance behavior and external navigation blocking.
-- Added automated syntax, JSON, CSP, and security-boundary checks.
+---
 
-## Audio distribution policy
+## ✨ Features & Capabilities
 
-Official PrimeMix packages do not include third-party audio.
+### 🎛️ Sound Management & Audio Library
+- **Independent Channel Controls:** Adjust track volumes individually or toggle mute on active sounds.
+- **Playlist Mode & Filtering:** Filter sound libraries by category, perform real-time search, and play tracks sequentially.
+- **Editable Metadata & Artwork:** Customize sound titles, categories, and cover images directly within the app.
+- **Favorites System:** Mark sounds as favorites for instant access.
 
-Users can import audio they created or are authorized to use. Future bundled audio must have complete license records and must be original, CC0 1.0, or covered by explicit written redistribution permission.
+### ⏱️ Timers & Productivity
+- **Pomodoro Focus Timer:** Pre-configured 25-minute work / 5-minute break cycle to boost concentration.
+- **Sleep Timer:** Gradually fades out audio before stopping playback to help you fall asleep peacefully.
 
-See `AUDIO_SOURCING_GUIDE.md` and the `licenses/` directory for the project policy and evidence format.
+### 🖥️ Desktop & Window Integration
+- **Mini Player:** Sleek, minimal UI option designed to stay visible without cluttering your screen.
+- **Startup Option:** Launch PrimeMix automatically with Windows startup.
+- **Global Media Keys:** Play, pause, and control playback using hardware keys.
 
-## Distribution
+---
 
-The release produces:
+## 🛡️ Security, Reliability & Architecture
 
-- `PrimeMix-1.0.0-win.zip`
-- `PrimeMix 1.0.0.exe`
+- **Modern Tech Stack:** Built with Electron 43.1.1 and electron-builder 26.15.3.
+- **Hardened Security Boundary:** Context isolation, renderer sandboxing, and strict IPC validation layer.
+- **Restrictive Content Security Policy (CSP):** Disabled inline event handlers and restricted external resources.
+- **Local File Security:** Enforced local media access boundaries and path containment checks.
+- **Atomic Persistence:** Safe, atomic metadata queue writes to prevent state corruption.
 
-Both targets are designed for 64-bit Windows. The ZIP edition is recommended for predictable startup and transparent file placement.
+---
 
-## Verification
+## 📁 Audio Licensing Policy
 
-The release was validated with:
+Official PrimeMix distribution packages **do not bundle third-party audio tracks**.
+- Users can freely import audio files they own or are authorized to use.
+- Future bundled audio will adhere strictly to CC0 1.0 or explicit written commercial redistribution licenses.
+- See [`AUDIO_SOURCING_GUIDE.md`](AUDIO_SOURCING_GUIDE.md) and [`licenses/`](licenses/) for complete project licensing rules and evidence standards.
 
-```powershell
-npm run check
-npm audit
-npm run build
-```
+---
 
-Expected security audit result:
+## 📦 Distribution & Installation
 
-```text
-found 0 vulnerabilities
-```
+PrimeMix v1.0.0 is packaged for 64-bit Windows in two distribution formats:
 
-## Publisher
+- **`PrimeMix-1.0.0-win.zip`** — Recommended portable folder archive. Extract and run `PrimeMix.exe`.
+- **`PrimeMix 1.0.0.exe`** — Standalone single-file portable executable.
 
-**Maximus Prime Software**
+### 💻 System Requirements
+- **OS:** Windows 10 or later (64-bit)
+- **Dependencies:** None (Fully self-contained)
 
-Developed by **Maximus Prime**
+---
 
-- GitHub: [@MaximusPrime](https://github.com/MaximusPrime)
-- Website: [maximusprimesoftware.pages.dev](https://maximusprimesoftware.pages.dev/)
-- Email: [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com)
+## 👥 Publisher & Contact
+
+**Maximus Prime Software**  
+Designed and developed by **Maximus Prime**
+
+- **Official Website:** [maximusprimesoftware.pages.dev](https://maximusprimesoftware.pages.dev/)
+- **Product Page:** [PrimeMix on Maximus Prime Software](https://maximusprimesoftware.pages.dev/projects/primemix/)
+- **GitHub Repository:** [MaximusPrime/PrimeMix](https://github.com/MaximusPrime/PrimeMix)
+- **Contact / Support:** [maximusprimesoftware@gmail.com](mailto:maximusprimesoftware@gmail.com)
