@@ -50,6 +50,9 @@
     "directories": {
       "output": "dist"
     },
+    "portable": {
+      "artifactName": "${productName}-${version}-win-portable.${ext}"
+    },
     "win": {
       "target": [
         "portable",
